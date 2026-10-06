@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Smart Totem</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+
+  <!-- TELA 1: inicial (qualquer toque nela abre o menu) -->
+  <section id="tela-inicial" class="tela ativa" tabindex="0" role="button"
+           aria-label="Smart Totem. Bem-vindo. Toque na tela para iniciar">
+    <p class="marca">Smart Totem</p>
+    <h1>Bem-vindo</h1>
+    <p class="subtitulo">Toque na tela para iniciar</p>
+  </section>
+
+  <!-- TELA 2: menu principal -->
+  <section id="menu-principal" class="tela">
+    <h2 tabindex="-1">Como podemos ajudar?</h2>
+    <div class="grade-opcoes">
+      <button type="button" class="cartao" data-abrir="tela-transporte">
+        <span class="icone" aria-hidden="true">T</span>
+        <span class="cartao-nome">Transporte</span>
+        <span class="cartao-desc">Horários, plataformas e embarques</span>
+      </button>
+      <button type="button" class="cartao" data-abrir="tela-cartoes">
+        <span class="icone" aria-hidden="true">C</span>
+        <span class="cartao-nome">Cartões</span>
+        <span class="cartao-desc">Saldo e recarga do cartão</span>
+      </button>
+      <button type="button" class="cartao" data-abrir="tela-mapas">
+        <span class="icone" aria-hidden="true">M</span>
+        <span class="cartao-nome">Mapas e rotas</span>
+        <span class="cartao-desc">Encontre locais e caminhos</span>
+      </button>
+      <button type="button" class="cartao" data-abrir="tela-ajuda">
+        <span class="icone" aria-hidden="true">?</span>
+        <span class="cartao-nome">Ajuda e acessibilidade</span>
+        <span class="cartao-desc">Atendimento e recursos de apoio</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- TELAS 3 a 6: seções vazias -->
+  <section id="tela-transporte" class="tela">
+    <h2 tabindex="-1">Transporte</h2>
+    <p class="aviso">Esta seção será desenvolvida nas próximas etapas.</p>
+  </section>
+
+  <section id="tela-cartoes" class="tela">
+    <h2 tabindex="-1">Cartões</h2>
+    <p class="aviso">Esta seção será desenvolvida nas próximas etapas.</p>
+  </section>
+
+  <section id="tela-mapas" class="tela">
+    <h2 tabindex="-1">Mapas e rotas</h2>
+    <p class="aviso">Esta seção será desenvolvida nas próximas etapas.</p>
+  </section>
+
+  <section id="tela-ajuda" class="tela">
+    <h2 tabindex="-1">Ajuda e acessibilidade</h2>
+    <p class="aviso">Esta seção será desenvolvida nas próximas etapas.</p>
+  </section>
+
+  <!-- Barra de navegação única, sempre na mesma posição -->
+  <nav id="barra-nav" class="barra-nav oculta" aria-label="Navegação do atendimento">
+    <button type="button" id="botao-voltar" class="botao-nav botao-voltar">Voltar</button>
+    <button type="button" id="botao-cancelar" class="botao-nav botao-cancelar">Cancelar atendimento</button>
+  </nav>
+
+  <!-- Confirmação de cancelamento -->
+  <div id="confirmacao" class="fundo-modal oculta">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="titulo-modal">
+      <h2 id="titulo-modal">Deseja cancelar este atendimento?</h2>
+      <div class="modal-botoes">
+        <button type="button" id="botao-sim" class="botao-nav botao-cancelar">Sim</button>
+        <button type="button" id="botao-nao" class="botao-nav botao-voltar">Não</button>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

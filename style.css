@@ -1,0 +1,162 @@
+/* ===== 1. Variáveis: cores e medidas em um só lugar ===== */
+:root {
+  --asfalto: #14202e;
+  --asfalto-claro: #1f3147;
+  --sinal: #ffc629;      /* amarelo de sinalização */
+  --branco: #ffffff;
+  --texto-suave: #c9d4e0;
+  --perigo: #d64545;
+  --altura-barra: 120px;
+}
+
+/* ===== 2. Base ===== */
+* { box-sizing: border-box; margin: 0; }
+
+html, body { height: 100%; }
+
+body {
+  font-family: "Segoe UI", Roboto, Arial, sans-serif;
+  color: var(--branco);
+  background-color: var(--asfalto);
+  /* Faixas de pista desenhadas só com CSS, sem imagem */
+  background-image:
+    repeating-linear-gradient(90deg, transparent 0 80px, rgba(255,198,41,.5) 80px 140px),
+    linear-gradient(180deg, var(--asfalto) 0%, var(--asfalto-claro) 100%);
+  background-size: 220px 6px, 100% 100%;
+  background-repeat: repeat-x, no-repeat;
+  background-position: 0 92%, 0 0;
+  overflow: hidden;
+}
+
+button { font: inherit; color: inherit; cursor: pointer; }
+
+/* Foco visível para acessibilidade */
+:focus-visible { outline: 5px solid var(--sinal); outline-offset: 4px; }
+
+/* ===== 3. Controle de telas ===== */
+.tela {
+  display: none;               /* escondida por padrão */
+  position: absolute;
+  inset: 0 0 var(--altura-barra) 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  padding: 32px;
+  text-align: center;
+}
+.tela.ativa { display: flex; } /* só a tela com "ativa" aparece */
+.oculta { display: none !important; }
+
+/* ===== 4. Tela inicial ===== */
+.marca { font-size: clamp(3.5rem, 10vw, 8rem); font-weight: 800; line-height: 1; color: var(--sinal); letter-spacing: .02em; }
+h1 { font-size: clamp(1.8rem, 4.5vw, 3.2rem); font-weight: 600; line-height: 1.1; }
+.subtitulo { font-size: clamp(1.3rem, 3vw, 2rem); color: var(--texto-suave); }
+
+/* A tela inicial inteira é tocável */
+#tela-inicial { cursor: pointer; }
+
+/* ===== 5. Menu principal ===== */
+h2 { font-size: clamp(2.2rem, 5vw, 3.6rem); }
+
+.grade-opcoes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 28px;
+  width: min(100%, 1100px);
+}
+
+.cartao {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  min-height: 220px;
+  padding: 28px;
+  text-align: left;
+  background: var(--branco);
+  color: var(--asfalto);
+  border: 0;
+  border-radius: 24px;
+  transition: transform .15s, box-shadow .15s, background .15s;
+}
+.cartao:hover { transform: translateY(-4px); box-shadow: 0 12px 30px rgba(0,0,0,.4); background: #fff8e1; }
+.cartao:active { transform: scale(.98); }
+
+/* Pictograma no estilo de placa de ponto de ônibus */
+.icone {
+  display: grid;
+  place-items: center;
+  width: 64px; height: 64px;
+  font-size: 2rem; font-weight: 800;
+  color: var(--asfalto);
+  background: var(--sinal);
+  border-radius: 14px;
+}
+.cartao-nome { font-size: 1.9rem; font-weight: 700; }
+.cartao-desc { font-size: 1.2rem; color: #4a5a6c; }
+
+/* ===== 6. Telas vazias ===== */
+.aviso {
+  padding: 20px 32px;
+  font-size: 1.4rem;
+  color: var(--texto-suave);
+  border: 2px dashed var(--texto-suave);
+  border-radius: 16px;
+}
+
+/* ===== 7. Barra de navegação (posição fixa) ===== */
+.barra-nav {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  height: var(--altura-barra);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 0 32px;
+  background: rgba(10, 18, 28, .92);
+}
+.botao-nav {
+  min-width: 240px;
+  min-height: 76px;
+  padding: 12px 32px;
+  font-size: 1.6rem;
+  font-weight: 700;
+  border-radius: 18px;
+  border: 3px solid transparent;
+  transition: transform .15s, filter .15s;
+}
+.botao-nav:hover { filter: brightness(1.15); }
+.botao-nav:active { transform: scale(.97); }
+.botao-voltar { background: var(--branco); color: var(--asfalto); }
+.botao-cancelar { background: var(--perigo); color: var(--branco); margin-left: auto; }
+/* Esconde o Voltar sem tirar do lugar, para o Cancelar não se mover */
+.botao-voltar.invisivel { visibility: hidden; }
+
+/* ===== 8. Confirmação ===== */
+.fundo-modal {
+  position: fixed; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+  background: rgba(0,0,0,.7);
+}
+.modal {
+  width: min(100%, 720px);
+  padding: 40px;
+  text-align: center;
+  background: var(--asfalto-claro);
+  border: 3px solid var(--sinal);
+  border-radius: 24px;
+}
+.modal h2 { font-size: clamp(1.6rem, 4vw, 2.4rem); margin-bottom: 32px; }
+.modal-botoes { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+.modal .botao-cancelar { margin-left: 0; }
+
+/* ===== 9. Telas menores ===== */
+@media (max-width: 700px) {
+  .grade-opcoes { grid-template-columns: 1fr; gap: 16px; }
+  .cartao { min-height: 140px; padding: 18px; }
+  .tela { overflow-y: auto; justify-content: flex-start; }
+  .botao-nav { min-width: 0; flex: 1; font-size: 1.2rem; }
+}
