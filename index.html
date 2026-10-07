@@ -8,203 +8,356 @@
 </head>
 <body>
 
-  <!-- TELA 1: inicial (qualquer toque nela abre o menu) -->
-  <section id="tela-inicial" class="tela ativa" tabindex="0" role="button"
-           aria-label="Smart Totem. Bem-vindo. Toque na tela para iniciar">
-    <p class="marca">Smart Totem</p>
+
+  <!-- TELA INICIAL -->
+  <div id="tela-inicial" class="tela ativa">
+    <div class="marca">Smart Totem</div>
     <h1>Bem-vindo</h1>
     <p class="subtitulo">Toque na tela para iniciar</p>
-  </section>
+  </div>
 
-  <!-- TELA 2: menu principal -->
-  <section id="menu-principal" class="tela">
-    <h2 tabindex="-1">Como podemos ajudar?</h2>
+  <!-- MENU PRINCIPAL -->
+  <div id="menu-principal" class="tela" role="region" aria-label="Menu Principal">
+    <h2>Como podemos ajudar?</h2>
     <div class="grade-opcoes">
-      <button type="button" class="cartao" data-abrir="tela-transporte">
-        <span class="icone" aria-hidden="true">T</span>
-        <span class="cartao-nome">Transporte</span>
+      <button class="cartao" data-abrir="tela-transporte">
+        <span class="icone">T</span>
+        <span class="cartao-name">Transporte</span>
         <span class="cartao-desc">Horários, plataformas e embarques</span>
       </button>
-      <button type="button" class="cartao" data-abrir="tela-cartoes">
-        <span class="icone" aria-hidden="true">C</span>
-        <span class="cartao-nome">Cartões</span>
+      <button class="cartao" data-abrir="tela-cartoes">
+        <span class="icone">C</span>
+        <span class="cartao-name">Cartões</span>
         <span class="cartao-desc">Opções do cartão-transporte</span>
       </button>
-      <button type="button" class="cartao" data-abrir="tela-mapas">
-        <span class="icone" aria-hidden="true">M</span>
-        <span class="cartao-nome">Mapas e rotas</span>
+      <button class="cartao" data-abrir="tela-mapas">
+        <span class="icone">M</span>
+        <span class="cartao-name">Mapas e rotas</span>
         <span class="cartao-desc">Encontre locais e caminhos</span>
       </button>
-      <button type="button" class="cartao" data-abrir="tela-ajuda">
-        <span class="icone" aria-hidden="true">?</span>
-        <span class="cartao-nome">Ajuda e acessibilidade</span>
+      <button class="cartao" data-abrir="tela-ajuda">
+        <span class="icone">?</span>
+        <span class="cartao-name">Ajuda e acessibilidade</span>
         <span class="cartao-desc">Atendimento e recursos de apoio</span>
       </button>
     </div>
-  </section>
+  </div>
 
-  <!-- TELAS 3 a 6: seções vazias -->
-  <section id="tela-transporte" class="tela">
-    <h2 tabindex="-1">Transporte</h2>
-    <p class="aviso">Esta seção será desenvolvida nas próximas etapas.</p>
-  </section>
+  <!-- SEÇÃO: TRANSPORTE -->
+  <div id="tela-transporte" class="tela">
+    <h2>Transporte</h2>
+    <div class="grade-opcoes">
+      <button class="cartao" id="btn-consultar-onibus">
+        <span class="icone">O</span>
+        <span class="cartao-name">Consultar ônibus</span>
+        <span class="cartao-desc">Verifique a previsão de chegada de linhas</span>
+      </button>
+    </div>
+    <div id="container-consulta-onibus" class="area-reservada oculta">
+      <p class="area-titulo">Painel de Consulta por Voz (Simulação)</p>
+      <p id="feedback-voz" class="aviso">Aguardando comando de voz ou entrada...</p>
+    </div>
+  </div>
 
-  <!-- ===== SEÇÃO CARTÕES: menu de funcionalidades ===== -->
-  <section id="tela-cartoes" class="tela">
-    <h2 tabindex="-1">Cartões</h2>
-    <p class="texto-info">Escolha uma opção relacionada ao seu cartão-transporte.</p>
+  <!-- SEÇÃO: MAPAS -->
+  <div id="tela-mapas" class="tela">
+    <h2>Mapas e rotas</h2>
+    <p class="texto-info">Esta seção será desenvolvida nas próximas etapas.</p>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SEÇÃO: CARTÕES (modo demonstração, dados em data/mockData.js)    -->
+  <!-- ================================================================ -->
+
+  <!-- Menu da seção -->
+  <div id="tela-cartoes" class="tela secao-cartoes">
+    <h2>Cartões</h2>
+    <p class="texto-info">Escolha uma opção. Todos os dados desta seção são fictícios.</p>
     <div class="grade-opcoes grade-tres">
-      <button type="button" class="cartao" data-funcionalidade="tela-saldo">
-        <span class="cartao-nome">Consultar saldo</span>
+      <button class="cartao" data-funcionalidade="tela-saldo">
+        <span class="cartao-name">Consultar saldo</span>
       </button>
-      <button type="button" class="cartao" data-funcionalidade="tela-extrato">
-        <span class="cartao-nome">Consultar extrato</span>
+      <button class="cartao" data-funcionalidade="tela-extrato">
+        <span class="cartao-name">Consultar extrato</span>
       </button>
-      <button type="button" class="cartao" data-funcionalidade="tela-recarga">
-        <span class="cartao-nome">Recarregar cartão</span>
+      <button class="cartao" data-funcionalidade="tela-recarga">
+        <span class="cartao-name">Recarregar cartão</span>
       </button>
-      <button type="button" class="cartao" data-funcionalidade="tela-bloqueio">
-        <span class="cartao-nome">Bloquear ou cancelar cartão</span>
+      <button class="cartao" data-funcionalidade="tela-bloqueio">
+        <span class="cartao-name">Bloquear ou cancelar cartão</span>
       </button>
-      <button type="button" class="cartao" data-funcionalidade="tela-carregamento">
-        <span class="cartao-nome">Como carregar uma recarga</span>
+      <button class="cartao" data-funcionalidade="tela-validacao">
+        <span class="cartao-name">Como validar uma recarga</span>
       </button>
-      <button type="button" class="cartao" data-funcionalidade="tela-tipos-cartao">
-        <span class="cartao-nome">Tipos de cartão e atendimento</span>
+      <button class="cartao" data-funcionalidade="tela-tipos-cartao">
+        <span class="cartao-name">Tipos de cartão e atendimento</span>
       </button>
     </div>
-  </section>
 
-  <!-- ===== CONSULTAR SALDO ===== -->
-  <section id="tela-saldo" class="tela">
-    <h2 tabindex="-1">Consultar saldo</h2>
-    <p class="texto-info">Esta função depende da conexão com o sistema oficial do cartão-transporte.</p>
-    <p class="status-integracao" role="status">Status da integração: Sistema oficial não conectado.</p>
-    <div class="area-reservada">
-      <p class="area-titulo">Área reservada</p>
-      <p>Futura conexão com leitor de cartão ou API.</p>
-      <!-- FUTURO: integrar leitor físico de cartão (NFC, RFID ou compatível) -->
-      <!-- FUTURO: conectar à API oficial de consulta de saldo -->
+    <div class="simulador" role="group" aria-labelledby="simulador-titulo">
+      <p id="simulador-titulo" class="area-titulo">Simulador de situações (apenas demonstração)</p>
+      <p class="simulador-ajuda">Escolha uma situação e depois use "Aproximar cartão" em qualquer funcionalidade.</p>
+      <div id="lista-cenarios" class="lista-cenarios"></div>
     </div>
-    <p class="mensagem-indisponivel">Consulta de saldo ainda não disponível neste protótipo.</p>
-  </section>
+  </div>
 
-  <!-- ===== CONSULTAR EXTRATO ===== -->
-  <section id="tela-extrato" class="tela">
-    <h2 tabindex="-1">Consultar extrato</h2>
-    <p class="texto-info">O extrato será exibido somente após a integração com o sistema oficial.</p>
-    <p class="status-integracao" role="status">Status da integração: Sistema oficial não conectado.</p>
-    <div class="area-reservada">
-      <p class="area-titulo">Área reservada</p>
-      <p>Futura autenticação ou leitura do cartão.</p>
-      <!-- FUTURO: implementar autenticação oficial antes de exibir qualquer extrato -->
-      <!-- FUTURO: conectar à API oficial de consulta de extrato -->
+  <!-- Consultar saldo -->
+  <div id="tela-saldo" class="tela secao-cartoes">
+    <h2>Consultar saldo</h2>
+
+    <div class="etapa" data-etapa="aproximar">
+      <h3>Aproxime o cartão</h3>
+      <p class="texto-info">Nesta demonstração, toque no botão abaixo. Nenhuma leitura real é feita.</p>
+      <button class="cartao cartao-acao" data-acao="saldo-aproximar">
+        <span class="cartao-name">Aproximar cartão</span>
+      </button>
     </div>
-    <p class="mensagem-indisponivel">Consulta de extrato ainda não disponível neste protótipo.</p>
-  </section>
 
-  <!-- ===== RECARREGAR CARTÃO ===== -->
-  <section id="tela-recarga" class="tela">
-    <h2 tabindex="-1">Recarregar cartão</h2>
-    <p class="texto-info">A recarga depende da integração com o sistema oficial, de um meio de pagamento e de um equipamento compatível.</p>
-    <p class="status-integracao" role="status">Status da integração: Sistema oficial não conectado.</p>
-    <div class="area-reservada">
-      <p class="area-titulo">Áreas reservadas para etapas futuras</p>
-      <ul>
-        <li>Identificação do cartão</li>
-        <li>Escolha do valor</li>
-        <li>Forma de pagamento</li>
-        <li>Confirmação</li>
-        <li>Emissão de comprovante</li>
-      </ul>
-      <!-- FUTURO: integrar leitor físico de cartão -->
-      <!-- FUTURO: implementar pagamento somente após homologação (gateway de pagamento) -->
-      <!-- FUTURO: integrar sistema de impressão do comprovante -->
+    <div class="etapa oculta" data-etapa="resultado">
+      <h3>Saldo do cartão</h3>
+      <div id="saldo-resultado" class="painel-cartao"></div>
     </div>
-    <p class="mensagem-indisponivel">Recarga ainda não disponível neste protótipo.</p>
-  </section>
+  </div>
 
-  <!-- ===== BLOQUEAR OU CANCELAR CARTÃO ===== -->
-  <section id="tela-bloqueio" class="tela">
-    <h2 tabindex="-1">Bloquear ou cancelar cartão</h2>
-    <p class="texto-info">O bloqueio ou cancelamento deve ser realizado somente por um canal oficial e autenticado.</p>
-    <p class="status-integracao" role="status">Status da integração: Sistema oficial não conectado.</p>
-    <div class="area-reservada">
-      <p class="area-titulo">Área reservada</p>
-      <p>Futura autenticação.</p>
-      <!-- FUTURO: implementar sistema de autenticação oficial -->
-      <!-- FUTURO: conectar à API oficial de bloqueio e cancelamento -->
+  <!-- Consultar extrato -->
+  <div id="tela-extrato" class="tela secao-cartoes">
+    <h2>Consultar extrato</h2>
+
+    <div class="etapa" data-etapa="aproximar">
+      <h3>Aproxime o cartão</h3>
+      <p class="texto-info">Nesta demonstração, toque no botão abaixo. Nenhuma leitura real é feita.</p>
+      <button class="cartao cartao-acao" data-acao="extrato-aproximar">
+        <span class="cartao-name">Aproximar cartão</span>
+      </button>
     </div>
-    <p class="mensagem-indisponivel">Esta função ainda não está conectada ao sistema oficial.</p>
-  </section>
 
-  <!-- ===== COMO CARREGAR UMA RECARGA (informativa) ===== -->
-  <section id="tela-carregamento" class="tela">
-    <h2 tabindex="-1">Como carregar uma recarga</h2>
-    <!-- FUTURO: validar esta informação com o órgão responsável -->
-    <p class="texto-info">Uma recarga comprada pode depender da aproximação do cartão em um equipamento validador compatível.</p>
-    <p class="aviso">As instruções finais deverão ser ajustadas conforme as regras do órgão responsável pelo cartão.</p>
-    <div class="area-reservada">
-      <p class="area-titulo">Áreas reservadas para etapas futuras</p>
-      <ul>
-        <li>Imagens</li>
-        <li>Instruções oficiais</li>
-        <li>Localização dos validadores</li>
-        <li>Prazo para carregamento</li>
-        <li>Mensagem de erro</li>
-      </ul>
-      <!-- FUTURO: validar instruções, locais e prazos com o órgão responsável -->
+    <div class="etapa oculta" data-etapa="resultado">
+      <h3>Movimentações de exemplo</h3>
+      <p class="texto-info">Todas as linhas abaixo são exemplos fictícios.</p>
+      <ul id="lista-extrato" class="lista-extrato"></ul>
     </div>
-  </section>
+  </div>
 
-  <!-- ===== TIPOS DE CARTÃO E ATENDIMENTO (informativa) ===== -->
-  <section id="tela-tipos-cartao" class="tela">
-    <h2 tabindex="-1">Tipos de cartão e atendimento</h2>
-    <p class="texto-info">As informações oficiais serão adicionadas após a validação com o órgão responsável.</p>
-    <div class="area-reservada">
-      <p class="area-titulo">Tipos de cartão (espaço reservado)</p>
-      <ul>
-        <li>Cartão usuário</li>
-        <li>Cartão estudante</li>
-        <li>Cartão avulso</li>
-        <li>Outros tipos oficiais</li>
-      </ul>
-      <!-- FUTURO: validar esta informação com o órgão responsável (nomes, taxas e regras de cada tipo) -->
+  <!-- Recarregar cartão (4 etapas: identificar, valor, confirmar, resultado) -->
+  <div id="tela-recarga" class="tela secao-cartoes">
+    <h2>Recarregar cartão</h2>
+
+    <div class="etapa" data-etapa="identificar">
+      <h3>Etapa 1 de 4: identifique o cartão</h3>
+      <p class="texto-info">Nenhum pagamento será realizado e nenhum cartão será recarregado.</p>
+      <button class="cartao cartao-acao" data-acao="recarga-aproximar">
+        <span class="cartao-name">Aproximar cartão</span>
+      </button>
     </div>
-    <div class="area-reservada">
-      <p class="area-titulo">Links e contatos oficiais (espaço reservado)</p>
-      <!-- FUTURO: inserir links oficiais -->
-      <!-- FUTURO: inserir contatos, horários e endereços oficiais de atendimento -->
+
+    <div class="etapa oculta" data-etapa="valor">
+      <h3>Etapa 2 de 4: escolha a quantidade de passes</h3>
+      <div id="lista-valores" class="grade-opcoes grade-tres"></div>
+      <div class="botoes-linha">
+        <button class="botao-nav botao-cancelar-op" data-acao="cancelar-operacao">Cancelar operação</button>
+      </div>
     </div>
-  </section>
 
-  <section id="tela-mapas" class="tela">
-    <h2 tabindex="-1">Mapas e rotas</h2>
-    <p class="aviso">Esta seção será desenvolvida nas próximas etapas.</p>
-  </section>
+    <div class="etapa oculta" data-etapa="confirmar">
+      <h3>Etapa 3 de 4: confirme a simulação</h3>
+      <div id="recarga-resumo" class="painel-cartao"></div>
+      <div class="mensagem-indisponivel" data-texto="avisoSimulacao"></div>
+      <div class="botoes-linha">
+        <button class="botao-nav botao-principal" data-acao="recarga-confirmar">Confirmar simulação</button>
+        <button class="botao-nav botao-voltar" data-acao="recarga-trocar-valor">Escolher outro valor</button>
+        <button class="botao-nav botao-cancelar-op" data-acao="cancelar-operacao">Cancelar operação</button>
+      </div>
+    </div>
 
-  <section id="tela-ajuda" class="tela">
-    <h2 tabindex="-1">Ajuda e acessibilidade</h2>
-    <p class="aviso">Esta seção será desenvolvida nas próximas etapas.</p>
-  </section>
-
-  <!-- Barra de navegação única, sempre na mesma posição -->
-  <nav id="barra-nav" class="barra-nav oculta" aria-label="Navegação do atendimento">
-    <button type="button" id="botao-voltar" class="botao-nav botao-voltar">Voltar</button>
-    <button type="button" id="botao-cancelar" class="botao-nav botao-cancelar">Cancelar atendimento</button>
-  </nav>
-
-  <!-- Confirmação de cancelamento -->
-  <div id="confirmacao" class="fundo-modal oculta">
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="titulo-modal">
-      <h2 id="titulo-modal">Deseja cancelar este atendimento?</h2>
-      <div class="modal-botoes">
-        <button type="button" id="botao-sim" class="botao-nav botao-cancelar">Sim, cancelar</button>
-        <button type="button" id="botao-nao" class="botao-nav botao-voltar">Não, continuar</button>
+    <div class="etapa oculta" data-etapa="resultado">
+      <h3>Etapa 4 de 4: resultado da simulação</h3>
+      <div id="recarga-resultado" class="painel-cartao"></div>
+      <div class="mensagem-indisponivel">Simulação concluída. Nenhum pagamento foi realizado e nenhum saldo foi alterado.</div>
+      <div class="botoes-linha">
+        <button class="botao-nav botao-principal" data-acao="estado-menu">Voltar ao menu de cartões</button>
       </div>
     </div>
   </div>
 
+  <!-- Bloquear ou cancelar cartão (fluxo demonstrativo) -->
+  <div id="tela-bloqueio" class="tela secao-cartoes">
+    <h2>Bloquear ou cancelar cartão</h2>
+
+    <div class="etapa" data-etapa="identificar">
+      <h3>Etapa 1 de 4: identifique o cartão</h3>
+      <p class="texto-info">Fluxo demonstrativo. Em um sistema real, esta ação exigiria um canal oficial e autenticado. Nenhum cartão será bloqueado.</p>
+      <button class="cartao cartao-acao" data-acao="bloqueio-aproximar">
+        <span class="cartao-name">Aproximar cartão</span>
+      </button>
+    </div>
+
+    <div class="etapa oculta" data-etapa="acao">
+      <h3>Etapa 2 de 4: escolha a ação de exemplo</h3>
+      <div class="grade-opcoes grade-tres">
+        <button class="cartao" data-acao="bloqueio-escolher" data-tipo="Bloquear cartão">
+          <span class="cartao-name">Bloquear cartão</span>
+          <span class="cartao-desc">Demonstração</span>
+        </button>
+        <button class="cartao" data-acao="bloqueio-escolher" data-tipo="Cancelar cartão">
+          <span class="cartao-name">Cancelar cartão</span>
+          <span class="cartao-desc">Demonstração</span>
+        </button>
+      </div>
+      <div class="botoes-linha">
+        <button class="botao-nav botao-cancelar-op" data-acao="cancelar-operacao">Cancelar operação</button>
+      </div>
+    </div>
+
+    <div class="etapa oculta" data-etapa="confirmar">
+      <h3>Etapa 3 de 4: confirme a simulação</h3>
+      <div id="bloqueio-resumo" class="painel-cartao"></div>
+      <div class="mensagem-indisponivel" data-texto="avisoSimulacaoBloqueio"></div>
+      <div class="botoes-linha">
+        <button class="botao-nav botao-principal" data-acao="bloqueio-confirmar">Confirmar simulação</button>
+        <button class="botao-nav botao-cancelar-op" data-acao="cancelar-operacao">Cancelar operação</button>
+      </div>
+    </div>
+
+    <div class="etapa oculta" data-etapa="resultado">
+      <h3>Etapa 4 de 4: resultado da simulação</h3>
+      <div id="bloqueio-resultado" class="painel-cartao"></div>
+      <div class="mensagem-indisponivel">Simulação concluída. Nenhum cartão foi bloqueado ou cancelado.</div>
+      <div class="botoes-linha">
+        <button class="botao-nav botao-principal" data-acao="estado-menu">Voltar ao menu de cartões</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Como validar uma recarga -->
+  <div id="tela-validacao" class="tela secao-cartoes">
+    <h2>Como validar uma recarga</h2>
+    <div class="status-integracao">O equipamento físico ainda não está conectado a este protótipo.</div>
+    <p class="texto-info">Instruções gerais e ilustrativas. As instruções oficiais serão adicionadas depois.</p>
+    <ol class="lista-passos">
+      <li>Tenha em mãos o cartão que vai receber a recarga.</li>
+      <li>Aproxime o cartão do equipamento validador indicado pelo atendimento oficial.</li>
+      <li>Aguarde o aviso do equipamento, sonoro ou visual.</li>
+      <li>Consulte o saldo para conferir o resultado.</li>
+    </ol>
+    <div class="area-reservada">
+      <p class="area-titulo">Áreas reservadas para informações oficiais</p>
+      <ul>
+        <li>Imagens do equipamento</li>
+        <li>Instruções oficiais</li>
+        <li>Localização dos validadores</li>
+        <li>Prazo para validação</li>
+        <li>Mensagens de erro do equipamento</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Tipos de cartão e atendimento -->
+  <div id="tela-tipos-cartao" class="tela secao-cartoes">
+    <h2>Tipos de cartão e atendimento</h2>
+    <p class="texto-info">Estas áreas aguardam informações oficiais. Nada aqui é regra, taxa, endereço ou horário real.</p>
+    <div class="grade-reservada">
+      <div class="area-reservada"><p class="area-titulo">Tipos de cartão</p><p>[Aguardando informação oficial]</p></div>
+      <div class="area-reservada"><p class="area-titulo">Regras de uso</p><p>[Aguardando informação oficial]</p></div>
+      <div class="area-reservada"><p class="area-titulo">Taxas e prazos</p><p>[Aguardando informação oficial]</p></div>
+      <div class="area-reservada"><p class="area-titulo">Documentos necessários</p><p>[Aguardando informação oficial]</p></div>
+      <div class="area-reservada"><p class="area-titulo">Endereços de atendimento</p><p>[Aguardando informação oficial]</p></div>
+      <div class="area-reservada"><p class="area-titulo">Horários e canais de contato</p><p>[Aguardando informação oficial]</p></div>
+    </div>
+  </div>
+
+  <!-- Tela única para os estados demonstrativos (o conteúdo é preenchido pelo script) -->
+  <div id="tela-estado" class="tela secao-cartoes" data-tipo="aviso">
+    <div id="estado-icone" class="estado-icone" aria-hidden="true">!</div>
+    <h2 id="estado-titulo"></h2>
+    <p id="estado-mensagem" class="texto-info"></p>
+    <p class="selo">ESTADO DEMONSTRATIVO</p>
+    <div class="botoes-linha">
+      <button id="estado-repetir" class="botao-nav botao-principal" data-acao="estado-repetir">Tentar novamente</button>
+      <button class="botao-nav botao-voltar" data-acao="estado-menu">Voltar ao menu de cartões</button>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SEÇÃO PRINCIPAL DE AJUDA E ACESSIBILIDADE                        -->
+  <!-- ================================================================ -->
+  <div id="tela-ajuda" class="tela" role="region" aria-label="Opções de Acessibilidade">
+    <h2>Acessibilidade</h2>
+    <p class="texto-info">Selecione o modo de saída para as instruções por voz:</p>
+
+    <div class="grade-opcoes">
+      <button class="cartao" data-abrir="tela-acessibilidade-altofalante">
+        <span class="icone">A</span>
+        <span class="cartao-name">Alto-falante</span>
+        <span class="cartao-desc">Ouvir voz pública no totem</span>
+      </button>
+      <button class="cartao" data-abrir="tela-acessibilidade-bluetooth">
+        <span class="icone">B</span>
+        <span class="cartao-name">Bluetooth</span>
+        <span class="cartao-desc">Conectar seu fone sem fio</span>
+      </button>
+      <button class="cartao" data-abrir="tela-acessibilidade-p2">
+        <span class="icone">P</span>
+        <span class="cartao-name">Entrada P2</span>
+        <span class="cartao-desc">Plugar fone de ouvido com fio</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- SUB-TELAS DE ACESSIBILIDADE -->
+  <div id="tela-acessibilidade-altofalante" class="tela">
+    <h2>Alto-falante Ativado</h2>
+    <p class="texto-info">O totem passará a narrar as opções na caixa de som externa.</p>
+    <div class="mensagem-indisponivel">Aperte "Voltar" para navegar pelo menu com suporte a áudio.</div>
+  </div>
+
+  <div id="tela-acessibilidade-bluetooth" class="tela">
+    <h2>Acessibilidade Bluetooth</h2>
+    <p class="texto-info">Ligue seu fone de ouvido e coloque-o em modo de pareamento.</p>
+
+    <button id="btn-conectar-bluetooth" class="cartao" style="align-items: center; margin: 0 auto; justify-content: center;">
+      <span class="icone">C</span>
+      <span class="cartao-name">Conectar fone</span>
+    </button>
+
+    <div id="status-bluetooth" class="status-integracao oculta">Buscando dispositivos...</div>
+  </div>
+
+  <div id="tela-acessibilidade-p2" class="tela">
+    <h2>Entrada P2 Selecionada</h2>
+    <p class="texto-info">Insira o plugue do seu fone de ouvido na entrada física localizada abaixo do teclado metálico.</p>
+    <div class="status-integracao">Aguardando conexão mecânica do fone...</div>
+  </div>
+
+  <!-- BARRA DE NAVEGAÇÃO FIXA -->
+  <nav id="barra-nav" class="barra-nav oculta">
+    <button id="botao-voltar" class="botao-nav botao-voltar">Voltar</button>
+    <button id="botao-cancelar" class="botao-nav botao-cancelar">Cancelar atendimento</button>
+  </nav>
+
+  <!-- MODAL: CONFIRMAÇÃO DE CANCELAMENTO -->
+  <div id="confirmacao" class="fundo-modal oculta">
+    <div class="modal" role="alertdialog" aria-modal="true" aria-labelledby="titulo-confirmacao">
+      <h2 id="titulo-confirmacao">Deseja cancelar este atendimento?</h2>
+      <div class="modal-botoes">
+        <button id="botao-sim" class="botao-nav botao-cancelar">Sim, cancelar</button>
+        <button id="botao-nao" class="botao-nav botao-voltar">Não, continuar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: AVISO DE INATIVIDADE -->
+  <div id="aviso-inatividade" class="fundo-modal fundo-aviso oculta">
+    <div class="modal" role="alertdialog" aria-modal="true" aria-labelledby="titulo-inatividade">
+      <h2 id="titulo-inatividade">Você ainda está aí?</h2>
+      <p class="texto-info">O atendimento será encerrado em <strong id="contagem-regressiva">15</strong> segundos.</p>
+      <div class="modal-botoes">
+        <button id="botao-continuar" class="botao-nav botao-principal">Continuar atendimento</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- A ORDEM IMPORTA: primeiro os dados, depois o script que os usa -->
+  <script src="MockDatas.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

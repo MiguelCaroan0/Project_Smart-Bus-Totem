@@ -18,20 +18,32 @@ body {
   font-family: "Segoe UI", Roboto, Arial, sans-serif;
   color: var(--branco);
   background-color: var(--asfalto);
-  /* Faixas de pista desenhadas só com CSS, sem imagem */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Faixas de pista em camada isolada para otimizar desempenho de renderização */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
   background-image:
     repeating-linear-gradient(90deg, transparent 0 80px, rgba(255,198,41,.5) 80px 140px),
     linear-gradient(180deg, var(--asfalto) 0%, var(--asfalto-claro) 100%);
   background-size: 220px 6px, 100% 100%;
   background-repeat: repeat-x, no-repeat;
   background-position: 0 92%, 0 0;
-  overflow: hidden;
+  z-index: -1;
+  will-change: transform;
 }
 
 button { font: inherit; color: inherit; cursor: pointer; }
 
 /* Foco visível para acessibilidade */
 :focus-visible { outline: 5px solid var(--sinal); outline-offset: 4px; }
+/* Títulos recebem foco por código (leitores de tela); não precisam de contorno */
+h2:focus, h3:focus { outline: none; }
 
 /* ===== 3. Controle de telas ===== */
 .tela {
@@ -58,8 +70,9 @@ h1 { font-size: clamp(1.8rem, 4.5vw, 3.2rem); font-weight: 600; line-height: 1.1
 /* A tela inicial inteira é tocável */
 #tela-inicial { cursor: pointer; }
 
-/* ===== 5. Menu principal ===== */
+/* ===== 5. Menu principal e cartões ===== */
 h2 { font-size: clamp(2.2rem, 5vw, 3.6rem); }
+h3 { font-size: clamp(1.5rem, 3.2vw, 2.2rem); font-weight: 700; }
 
 .grade-opcoes {
   display: grid;
@@ -95,26 +108,27 @@ h2 { font-size: clamp(2.2rem, 5vw, 3.6rem); }
   background: var(--sinal);
   border-radius: 14px;
 }
-.cartao-nome { font-size: 1.9rem; font-weight: 700; }
+.cartao-name { font-size: 1.9rem; font-weight: 700; }
 .cartao-desc { font-size: 1.2rem; color: #4a5a6c; }
 
-/* Cards do menu principal com o conteúdo centralizado */
-#menu-principal .cartao {
+/* Cards do menu principal e centrais com o conteúdo alinhado */
+#menu-principal .cartao, #tela-ajuda .cartao {
   align-items: center;
   justify-content: center;
   text-align: center;
 }
 
-/* ===== 6. Telas vazias ===== */
+/* ===== 6. Telas vazias / Avisos ===== */
 .aviso {
   padding: 20px 32px;
   font-size: 1.4rem;
   color: var(--texto-suave);
   border: 2px dashed var(--texto-suave);
   border-radius: 16px;
+  background: rgba(0, 0, 0, 0.2);
 }
 
-/* ===== 7. Barra de navegação (posição fixa) ===== */
+/* ===== 7. Barra de navegação ===== */
 .barra-nav {
   position: fixed;
   left: 0; right: 0; bottom: 0;
@@ -140,17 +154,19 @@ h2 { font-size: clamp(2.2rem, 5vw, 3.6rem); }
 .botao-nav:active { transform: scale(.97); }
 .botao-voltar { background: var(--branco); color: var(--asfalto); }
 .botao-cancelar { background: var(--perigo); color: var(--branco); margin-left: auto; }
-/* Esconde o Voltar sem tirar do lugar, para o Cancelar não se mover */
 .botao-voltar.invisivel { visibility: hidden; }
 
-/* ===== 8. Confirmação ===== */
+/* ===== 8. Modais (cancelamento e inatividade) ===== */
 .fundo-modal {
   position: fixed; inset: 0;
   display: flex; align-items: center; justify-content: center;
   padding: 24px;
   background: rgba(0,0,0,.7);
+  z-index: 10;
 }
+.fundo-aviso { z-index: 20; }  /* o aviso de inatividade fica acima de tudo */
 .modal {
+  display: flex; flex-direction: column; align-items: center; gap: 24px;
   width: min(100%, 720px);
   padding: 40px;
   text-align: center;
@@ -158,25 +174,23 @@ h2 { font-size: clamp(2.2rem, 5vw, 3.6rem); }
   border: 3px solid var(--sinal);
   border-radius: 24px;
 }
-.modal h2 { font-size: clamp(1.6rem, 4vw, 2.4rem); margin-bottom: 32px; }
+.modal h2 { font-size: clamp(1.6rem, 4vw, 2.4rem); }
 .modal-botoes { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
 .modal .botao-cancelar { margin-left: 0; }
 
-/* ===== 8b. Seção Cartões ===== */
+/* ===== 9. Textos, status e áreas reservadas ===== */
 .texto-info { max-width: 900px; font-size: clamp(1.2rem, 2.4vw, 1.7rem); color: var(--texto-suave); }
 
-/* Variação da grade: três colunas, cartões um pouco menores */
 .grade-tres { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
 .grade-tres .cartao {
-  align-items: center;      /* centraliza na horizontal */
-  justify-content: center;  /* centraliza na vertical */
+  align-items: center;
+  justify-content: center;
   text-align: center;
   min-height: 150px;
   padding: 20px 24px;
 }
-.grade-tres .cartao-nome { font-size: 1.8rem; line-height: 1.2; }
+.grade-tres .cartao-name { font-size: 1.8rem; line-height: 1.2; }
 
-/* Status da integração: cor de aviso, sem tom alarmista */
 .status-integracao {
   padding: 12px 28px;
   font-size: 1.2rem;
@@ -186,7 +200,6 @@ h2 { font-size: clamp(2.2rem, 5vw, 3.6rem); }
   border-radius: 999px;
 }
 
-/* Áreas que serão preenchidas em etapas futuras */
 .area-reservada {
   width: min(100%, 900px);
   padding: 24px 32px;
@@ -209,14 +222,122 @@ h2 { font-size: clamp(2.2rem, 5vw, 3.6rem); }
   border-radius: 8px;
 }
 
+/* ===== 11. Seção Cartões: etapas, painéis e botões ===== */
+.etapa {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 24px;
+  width: 100%;
+}
+
+.cartao-acao {
+  align-items: center; justify-content: center; text-align: center;
+  width: min(100%, 520px);
+  min-height: 200px;
+}
+
+.botoes-linha { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; }
+.botao-principal { background: var(--sinal); color: var(--asfalto); }
+.botao-cancelar-op { background: transparent; color: var(--branco); border-color: var(--perigo); }
+
+/* Painel com pares "rótulo: valor" (usa <dl>) */
+.painel-cartao {
+  width: min(100%, 760px);
+  padding: 24px 32px;
+  text-align: left;
+  background: var(--branco);
+  color: var(--asfalto);
+  border-radius: 24px;
+}
+.painel-cartao dl { display: grid; gap: 12px; margin-top: 12px; }
+.linha-painel { display: flex; justify-content: space-between; gap: 24px; font-size: 1.4rem; }
+.linha-painel dt { color: #4a5a6c; }
+.linha-painel dd { font-weight: 700; text-align: right; }
+.linha-painel.destaque { padding-top: 12px; border-top: 3px solid var(--sinal); font-size: 2.2rem; }
+
+/* Selo que marca conteúdo fictício */
+.selo {
+  display: inline-block;
+  padding: 4px 14px;
+  font-size: 1rem; font-weight: 800;
+  color: var(--asfalto);
+  background: var(--sinal);
+  border-radius: 999px;
+}
+
+/* Extrato */
+.lista-extrato { list-style: none; padding: 0; display: grid; gap: 12px; width: min(100%, 900px); }
+.item-extrato {
+  display: flex; justify-content: space-between; align-items: center; gap: 24px;
+  padding: 16px 28px;
+  text-align: left;
+  background: var(--branco);
+  color: var(--asfalto);
+  border-radius: 16px;
+}
+.item-extrato div > * { display: block; }
+.item-extrato strong { font-size: 1.5rem; }
+.data-extrato { font-size: 1.2rem; color: #4a5a6c; }
+.valor-extrato { text-align: right; font-size: 1.6rem; font-weight: 800; }
+.valor-extrato .selo { margin-top: 6px; }
+
+/* Simulador de situações */
+.simulador {
+  width: min(100%, 1100px);
+  padding: 20px 28px;
+  border: 2px dashed var(--texto-suave);
+  border-radius: 16px;
+}
+.simulador-ajuda { font-size: 1.1rem; color: var(--texto-suave); margin-bottom: 14px; }
+.lista-cenarios { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+.chip {
+  min-height: 64px;
+  padding: 10px 22px;
+  font-size: 1.3rem; font-weight: 700;
+  background: transparent;
+  border: 3px solid var(--texto-suave);
+  border-radius: 999px;
+}
+.chip[aria-pressed="true"] { background: var(--sinal); color: var(--asfalto); border-color: var(--sinal); }
+
+/* Instruções passo a passo e áreas reservadas em grade */
+.lista-passos {
+  width: min(100%, 900px);
+  padding-left: 40px;
+  display: grid; gap: 14px;
+  text-align: left;
+  font-size: 1.5rem;
+}
+.grade-reservada {
+  display: grid; gap: 20px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  width: min(100%, 1100px);
+}
+.grade-reservada .area-reservada { width: 100%; }
+
+/* Tela de estados demonstrativos */
+.estado-icone {
+  display: grid; place-items: center;
+  width: 110px; height: 110px;
+  font-size: 3.4rem; font-weight: 800;
+  color: var(--asfalto);
+  background: var(--sinal);
+  border-radius: 50%;
+}
+#tela-estado[data-tipo="erro"] .estado-icone { background: var(--perigo); color: var(--branco); }
+
+/* ===== 12. Telas menores ===== */
 @media (max-width: 1000px) {
   .grade-tres { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
-/* ===== 9. Telas menores ===== */
 @media (max-width: 700px) {
-  .grade-opcoes, .grade-tres { grid-template-columns: 1fr; gap: 16px; }
+  .grade-opcoes, .grade-tres, .grade-reservada { grid-template-columns: 1fr; gap: 16px; }
   .cartao { min-height: 140px; padding: 18px; }
   .tela { overflow-y: auto; justify-content: flex-start; }
   .botao-nav { min-width: 0; flex: 1; font-size: 1.2rem; }
+}
+
+/* Respeita quem prefere menos movimento */
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
 }
