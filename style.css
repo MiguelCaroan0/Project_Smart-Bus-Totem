@@ -44,6 +44,8 @@ button { font: inherit; color: inherit; cursor: pointer; }
   gap: 28px;
   padding: 32px;
   text-align: center;
+  overflow-y: auto;
+  justify-content: safe center;
 }
 .tela.ativa { display: flex; } /* só a tela com "ativa" aparece */
 .oculta { display: none !important; }
@@ -95,6 +97,13 @@ h2 { font-size: clamp(2.2rem, 5vw, 3.6rem); }
 }
 .cartao-nome { font-size: 1.9rem; font-weight: 700; }
 .cartao-desc { font-size: 1.2rem; color: #4a5a6c; }
+
+/* Cards do menu principal com o conteúdo centralizado */
+#menu-principal .cartao {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
 
 /* ===== 6. Telas vazias ===== */
 .aviso {
@@ -153,9 +162,60 @@ h2 { font-size: clamp(2.2rem, 5vw, 3.6rem); }
 .modal-botoes { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
 .modal .botao-cancelar { margin-left: 0; }
 
+/* ===== 8b. Seção Cartões ===== */
+.texto-info { max-width: 900px; font-size: clamp(1.2rem, 2.4vw, 1.7rem); color: var(--texto-suave); }
+
+/* Variação da grade: três colunas, cartões um pouco menores */
+.grade-tres { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+.grade-tres .cartao {
+  align-items: center;      /* centraliza na horizontal */
+  justify-content: center;  /* centraliza na vertical */
+  text-align: center;
+  min-height: 150px;
+  padding: 20px 24px;
+}
+.grade-tres .cartao-nome { font-size: 1.8rem; line-height: 1.2; }
+
+/* Status da integração: cor de aviso, sem tom alarmista */
+.status-integracao {
+  padding: 12px 28px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  background: rgba(255, 198, 41, .15);
+  border: 2px solid var(--sinal);
+  border-radius: 999px;
+}
+
+/* Áreas que serão preenchidas em etapas futuras */
+.area-reservada {
+  width: min(100%, 900px);
+  padding: 24px 32px;
+  text-align: left;
+  font-size: 1.3rem;
+  color: var(--texto-suave);
+  border: 2px dashed var(--texto-suave);
+  border-radius: 16px;
+}
+.area-titulo { font-weight: 700; color: var(--branco); margin-bottom: 8px; }
+.area-reservada ul { padding-left: 28px; display: grid; gap: 6px; }
+
+.mensagem-indisponivel {
+  max-width: 900px;
+  padding: 16px 24px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  border-left: 8px solid var(--sinal);
+  background: rgba(255,255,255,.08);
+  border-radius: 8px;
+}
+
+@media (max-width: 1000px) {
+  .grade-tres { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
 /* ===== 9. Telas menores ===== */
 @media (max-width: 700px) {
-  .grade-opcoes { grid-template-columns: 1fr; gap: 16px; }
+  .grade-opcoes, .grade-tres { grid-template-columns: 1fr; gap: 16px; }
   .cartao { min-height: 140px; padding: 18px; }
   .tela { overflow-y: auto; justify-content: flex-start; }
   .botao-nav { min-width: 0; flex: 1; font-size: 1.2rem; }

@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Smart Totem</title>
   <link rel="stylesheet" href="style.css">
-  <script src="script.js" defer></script>
 </head>
 <body>
 
@@ -29,7 +28,7 @@
       <button type="button" class="cartao" data-abrir="tela-cartoes">
         <span class="icone" aria-hidden="true">C</span>
         <span class="cartao-nome">Cartões</span>
-        <span class="cartao-desc">Saldo e recarga do cartão</span>
+        <span class="cartao-desc">Opções do cartão-transporte</span>
       </button>
       <button type="button" class="cartao" data-abrir="tela-mapas">
         <span class="icone" aria-hidden="true">M</span>
@@ -50,9 +49,133 @@
     <p class="aviso">Esta seção será desenvolvida nas próximas etapas.</p>
   </section>
 
+  <!-- ===== SEÇÃO CARTÕES: menu de funcionalidades ===== -->
   <section id="tela-cartoes" class="tela">
     <h2 tabindex="-1">Cartões</h2>
-    <p class="aviso">Esta seção será desenvolvida nas próximas etapas.</p>
+    <p class="texto-info">Escolha uma opção relacionada ao seu cartão-transporte.</p>
+    <div class="grade-opcoes grade-tres">
+      <button type="button" class="cartao" data-funcionalidade="tela-saldo">
+        <span class="cartao-nome">Consultar saldo</span>
+      </button>
+      <button type="button" class="cartao" data-funcionalidade="tela-extrato">
+        <span class="cartao-nome">Consultar extrato</span>
+      </button>
+      <button type="button" class="cartao" data-funcionalidade="tela-recarga">
+        <span class="cartao-nome">Recarregar cartão</span>
+      </button>
+      <button type="button" class="cartao" data-funcionalidade="tela-bloqueio">
+        <span class="cartao-nome">Bloquear ou cancelar cartão</span>
+      </button>
+      <button type="button" class="cartao" data-funcionalidade="tela-carregamento">
+        <span class="cartao-nome">Como carregar uma recarga</span>
+      </button>
+      <button type="button" class="cartao" data-funcionalidade="tela-tipos-cartao">
+        <span class="cartao-nome">Tipos de cartão e atendimento</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ===== CONSULTAR SALDO ===== -->
+  <section id="tela-saldo" class="tela">
+    <h2 tabindex="-1">Consultar saldo</h2>
+    <p class="texto-info">Esta função depende da conexão com o sistema oficial do cartão-transporte.</p>
+    <p class="status-integracao" role="status">Status da integração: Sistema oficial não conectado.</p>
+    <div class="area-reservada">
+      <p class="area-titulo">Área reservada</p>
+      <p>Futura conexão com leitor de cartão ou API.</p>
+      <!-- FUTURO: integrar leitor físico de cartão (NFC, RFID ou compatível) -->
+      <!-- FUTURO: conectar à API oficial de consulta de saldo -->
+    </div>
+    <p class="mensagem-indisponivel">Consulta de saldo ainda não disponível neste protótipo.</p>
+  </section>
+
+  <!-- ===== CONSULTAR EXTRATO ===== -->
+  <section id="tela-extrato" class="tela">
+    <h2 tabindex="-1">Consultar extrato</h2>
+    <p class="texto-info">O extrato será exibido somente após a integração com o sistema oficial.</p>
+    <p class="status-integracao" role="status">Status da integração: Sistema oficial não conectado.</p>
+    <div class="area-reservada">
+      <p class="area-titulo">Área reservada</p>
+      <p>Futura autenticação ou leitura do cartão.</p>
+      <!-- FUTURO: implementar autenticação oficial antes de exibir qualquer extrato -->
+      <!-- FUTURO: conectar à API oficial de consulta de extrato -->
+    </div>
+    <p class="mensagem-indisponivel">Consulta de extrato ainda não disponível neste protótipo.</p>
+  </section>
+
+  <!-- ===== RECARREGAR CARTÃO ===== -->
+  <section id="tela-recarga" class="tela">
+    <h2 tabindex="-1">Recarregar cartão</h2>
+    <p class="texto-info">A recarga depende da integração com o sistema oficial, de um meio de pagamento e de um equipamento compatível.</p>
+    <p class="status-integracao" role="status">Status da integração: Sistema oficial não conectado.</p>
+    <div class="area-reservada">
+      <p class="area-titulo">Áreas reservadas para etapas futuras</p>
+      <ul>
+        <li>Identificação do cartão</li>
+        <li>Escolha do valor</li>
+        <li>Forma de pagamento</li>
+        <li>Confirmação</li>
+        <li>Emissão de comprovante</li>
+      </ul>
+      <!-- FUTURO: integrar leitor físico de cartão -->
+      <!-- FUTURO: implementar pagamento somente após homologação (gateway de pagamento) -->
+      <!-- FUTURO: integrar sistema de impressão do comprovante -->
+    </div>
+    <p class="mensagem-indisponivel">Recarga ainda não disponível neste protótipo.</p>
+  </section>
+
+  <!-- ===== BLOQUEAR OU CANCELAR CARTÃO ===== -->
+  <section id="tela-bloqueio" class="tela">
+    <h2 tabindex="-1">Bloquear ou cancelar cartão</h2>
+    <p class="texto-info">O bloqueio ou cancelamento deve ser realizado somente por um canal oficial e autenticado.</p>
+    <p class="status-integracao" role="status">Status da integração: Sistema oficial não conectado.</p>
+    <div class="area-reservada">
+      <p class="area-titulo">Área reservada</p>
+      <p>Futura autenticação.</p>
+      <!-- FUTURO: implementar sistema de autenticação oficial -->
+      <!-- FUTURO: conectar à API oficial de bloqueio e cancelamento -->
+    </div>
+    <p class="mensagem-indisponivel">Esta função ainda não está conectada ao sistema oficial.</p>
+  </section>
+
+  <!-- ===== COMO CARREGAR UMA RECARGA (informativa) ===== -->
+  <section id="tela-carregamento" class="tela">
+    <h2 tabindex="-1">Como carregar uma recarga</h2>
+    <!-- FUTURO: validar esta informação com o órgão responsável -->
+    <p class="texto-info">Uma recarga comprada pode depender da aproximação do cartão em um equipamento validador compatível.</p>
+    <p class="aviso">As instruções finais deverão ser ajustadas conforme as regras do órgão responsável pelo cartão.</p>
+    <div class="area-reservada">
+      <p class="area-titulo">Áreas reservadas para etapas futuras</p>
+      <ul>
+        <li>Imagens</li>
+        <li>Instruções oficiais</li>
+        <li>Localização dos validadores</li>
+        <li>Prazo para carregamento</li>
+        <li>Mensagem de erro</li>
+      </ul>
+      <!-- FUTURO: validar instruções, locais e prazos com o órgão responsável -->
+    </div>
+  </section>
+
+  <!-- ===== TIPOS DE CARTÃO E ATENDIMENTO (informativa) ===== -->
+  <section id="tela-tipos-cartao" class="tela">
+    <h2 tabindex="-1">Tipos de cartão e atendimento</h2>
+    <p class="texto-info">As informações oficiais serão adicionadas após a validação com o órgão responsável.</p>
+    <div class="area-reservada">
+      <p class="area-titulo">Tipos de cartão (espaço reservado)</p>
+      <ul>
+        <li>Cartão usuário</li>
+        <li>Cartão estudante</li>
+        <li>Cartão avulso</li>
+        <li>Outros tipos oficiais</li>
+      </ul>
+      <!-- FUTURO: validar esta informação com o órgão responsável (nomes, taxas e regras de cada tipo) -->
+    </div>
+    <div class="area-reservada">
+      <p class="area-titulo">Links e contatos oficiais (espaço reservado)</p>
+      <!-- FUTURO: inserir links oficiais -->
+      <!-- FUTURO: inserir contatos, horários e endereços oficiais de atendimento -->
+    </div>
   </section>
 
   <section id="tela-mapas" class="tela">
@@ -76,11 +199,12 @@
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="titulo-modal">
       <h2 id="titulo-modal">Deseja cancelar este atendimento?</h2>
       <div class="modal-botoes">
-        <button type="button" id="botao-sim" class="botao-nav botao-cancelar">Sim</button>
-        <button type="button" id="botao-nao" class="botao-nav botao-voltar">Não</button>
+        <button type="button" id="botao-sim" class="botao-nav botao-cancelar">Sim, cancelar</button>
+        <button type="button" id="botao-nao" class="botao-nav botao-voltar">Não, continuar</button>
       </div>
     </div>
   </div>
 
+  <script src="script.js"></script>
 </body>
 </html>
