@@ -1,379 +1,607 @@
-/* ===== 1. Variáveis: cores e medidas em um só lugar ===== */
 :root {
   --asfalto: #14202e;
   --asfalto-claro: #1f3147;
-  --sinal: #ffc629;      /* amarelo de sinalização */
+  --sinal: #ffc629;
   --branco: #ffffff;
   --texto-suave: #c9d4e0;
   --perigo: #d64545;
-  --altura-barra: 120px;
+  --saude-cor: #27ae60;
+  --transporte-cor: #2980b9;
+  --servicos-cor: #8e44ad;
+  --altura-barra: 100px;
 }
 
-/* ===== 2. Base ===== */
-* { box-sizing: border-box; margin: 0; }
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
-html, body { height: 100%; }
+html, body {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
 
 body {
   font-family: "Segoe UI", Roboto, Arial, sans-serif;
   color: var(--branco);
   background-color: var(--asfalto);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
 }
 
-/* Faixas de pista em camada isolada para otimizar desempenho de renderização */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  background-image:
-    repeating-linear-gradient(90deg, transparent 0 80px, rgba(255,198,41,.5) 80px 140px),
-    linear-gradient(180deg, var(--asfalto) 0%, var(--asfalto-claro) 100%);
-  background-size: 220px 6px, 100% 100%;
-  background-repeat: repeat-x, no-repeat;
-  background-position: 0 92%, 0 0;
-  z-index: -1;
-  will-change: transform;
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
 }
 
-button { font: inherit; color: inherit; cursor: pointer; }
-
-/* Foco visível para acessibilidade */
-:focus-visible { outline: 5px solid var(--sinal); outline-offset: 4px; }
-/* Títulos recebem foco por código (leitores de tela); não precisam de contorno */
-h2:focus, h3:focus { outline: none; }
-
-/* ===== 3. Controle de telas ===== */
+/* Estrutura Geral das Telas */
 .tela {
-  display: none;               /* escondida por padrão */
+  display: none;
   position: absolute;
-  inset: 0 0 var(--altura-barra) 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: var(--altura-barra);
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 28px;
-  padding: 32px;
+  gap: 20px;
+  padding: 20px;
   text-align: center;
   overflow-y: auto;
-  justify-content: safe center;
 }
-.tela.ativa { display: flex; } /* só a tela com "ativa" aparece */
-.oculta { display: none !important; }
 
-/* ===== 4. Tela inicial ===== */
-.marca { font-size: clamp(3.5rem, 10vw, 8rem); font-weight: 800; line-height: 1; color: var(--sinal); letter-spacing: .02em; }
-h1 { font-size: clamp(1.8rem, 4.5vw, 3.2rem); font-weight: 600; line-height: 1.1; }
-.subtitulo { font-size: clamp(1.3rem, 3vw, 2rem); color: var(--texto-suave); }
+.tela.ativa {
+  display: flex !important;
+}
 
-/* A tela inicial inteira é tocável */
-#tela-inicial { cursor: pointer; }
+.oculta {
+  display: none !important;
+}
 
-/* ===== 5. Menu principal e cartões ===== */
-h2 { font-size: clamp(2.2rem, 5vw, 3.6rem); }
-h3 { font-size: clamp(1.5rem, 3.2vw, 2.2rem); font-weight: 700; }
+/* TELA INICIAL */
+#tela-inicial {
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  user-select: none;
+  bottom: 0;
+  z-index: 10;
+}
 
+#tela-inicial.ativa {
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+#tela-inicial .marca {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 800;
+  color: var(--sinal);
+  letter-spacing: 1px;
+}
+
+#tela-inicial h1 {
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-weight: 700;
+  color: var(--branco);
+}
+
+#tela-inicial .toque-iniciar {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  animation: pulsar 2s infinite ease-in-out;
+}
+
+#tela-inicial .toque-iniciar p {
+  font-size: 1.2rem;
+  color: var(--sinal);
+  font-weight: 600;
+}
+
+@keyframes pulsar {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.85;
+  }
+}
+
+/* GRADES DE OPÇÕES E CARTÕES */
 .grade-opcoes {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 28px;
-  width: min(100%, 1100px);
+  gap: 20px;
+  width: min(100%, 1000px);
 }
 
 .cartao {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 8px;
-  min-height: 220px;
-  padding: 28px;
-  text-align: left;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 20px;
   background: var(--branco);
   color: var(--asfalto);
   border: 0;
-  border-radius: 24px;
-  transition: transform .15s, box-shadow .15s, background .15s;
+  border-radius: 20px;
+  min-height: 160px;
+  transition: transform 0.2s ease, background-color 0.2s ease;
 }
-.cartao:hover { transform: translateY(-4px); box-shadow: 0 12px 30px rgba(0,0,0,.4); background: #fff8e1; }
-.cartao:active { transform: scale(.98); }
 
-/* Pictograma no estilo de placa de ponto de ônibus */
+.cartao:hover {
+  background: #fff8e1;
+  transform: translateY(-2px);
+}
+
 .icone {
+  font-size: 2rem;
+  background: var(--sinal);
+  padding: 12px;
+  border-radius: 12px;
+}
+
+.cartao-nome {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.cartao-desc {
+  font-size: 0.95rem;
+  color: #4a5a6c;
+}
+
+/* ESTILOS DO MAPA */
+#tela-mapas {
+  padding: 12px;
+  justify-content: stretch;
+}
+
+.mapa-container {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+  height: calc(100vh - var(--altura-barra) - 40px);
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+/* Painel Lateral */
+.mapa-painel {
+  flex: 1;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: var(--asfalto-claro);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 18px;
+  border-radius: 20px;
+  text-align: left;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+}
+
+.painel-header h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: var(--sinal);
+}
+
+/* Busca */
+.busca-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.busca-icone {
+  position: absolute;
+  left: 12px;
+  font-size: 1rem;
+  opacity: 0.6;
+}
+
+#busca-local {
+  width: 100%;
+  padding: 12px 12px 12px 40px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  color: var(--branco);
+  font-size: 0.95rem;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+#busca-local:focus {
+  border-color: var(--sinal);
+  background: rgba(0, 0, 0, 0.4);
+}
+
+/* Filtros */
+.mapa-filtros {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.btn-filtro {
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--texto-suave);
+  transition: all 0.2s ease;
+}
+
+.btn-filtro:hover, .btn-filtro.ativo {
+  background: var(--sinal);
+  color: var(--asfalto);
+  border-color: var(--sinal);
+  font-weight: 700;
+}
+
+/* Lista de Card Itens */
+.lista-locais {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.lista-locais::-webkit-scrollbar {
+  width: 6px;
+}
+.lista-locais::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+}
+
+.item-local {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 12px 14px;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.2s ease;
+  position: relative;
+}
+
+.item-local:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+.item-header-linha {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.item-titulo {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--branco);
+}
+
+.item-distancia {
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 2px 8px;
+  border-radius: 10px;
+  color: var(--sinal);
+}
+
+.item-sub {
+  font-size: 0.8rem;
+  color: var(--texto-suave);
+}
+
+/* Detalhes do Ponto (Card Glassmorphism) */
+.mapa-detalhes {
+  background: rgba(20, 32, 46, 0.92);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--sinal);
+  padding: 16px;
+  border-radius: 16px;
+  position: relative;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+  animation: subirPainel 0.3s ease-out;
+}
+
+@keyframes subirPainel {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.btn-fechar {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  background: rgba(214, 69, 69, 0.2);
+  color: var(--perigo);
+  border: 1px solid var(--perigo);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-weight: bold;
   display: grid;
   place-items: center;
-  width: 64px; height: 64px;
-  font-size: 2rem; font-weight: 800;
-  color: var(--asfalto);
-  background: var(--sinal);
-  border-radius: 14px;
 }
-.cartao-name { font-size: 1.9rem; font-weight: 700; }
-.cartao-desc { font-size: 1.2rem; color: #4a5a6c; }
 
-/* Cards do menu principal e centrais com o conteúdo alinhado */
-#menu-principal .cartao, #tela-ajuda .cartao {
+.detalhe-header {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.badge-tipo {
+  padding: 4px 10px;
+  background: var(--sinal);
+  color: var(--asfalto);
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+
+.badge-distancia {
+  padding: 4px 10px;
+  background: rgba(255, 255, 255, 0.15);
+  color: var(--branco);
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.75rem;
+}
+
+#detalhe-nome {
+  font-size: 1.15rem;
+  color: var(--branco);
+  margin-bottom: 10px;
+}
+
+.detalhe-info-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: var(--texto-suave);
+  margin-bottom: 12px;
+}
+
+.qr-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+  color: #14202e;
+  padding: 10px 14px;
+  border-radius: 12px;
+}
+
+.qr-textos {
+  display: flex;
+  flex-direction: column;
+}
+
+.qr-textos strong {
+  font-size: 0.85rem;
+}
+
+.qr-textos span {
+  font-size: 0.75rem;
+  color: #555;
+}
+
+.qr-box img {
+  width: 70px;
+  height: 70px;
+  border-radius: 6px;
+}
+
+/* Wrapper do Mapa */
+.mapa-wrapper {
+  flex: 2;
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  min-height: 400px;
+}
+
+#mapa-canvas {
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  background: #14202e;
+  z-index: 1;
+}
+
+/* Controles Touch Flutuantes */
+.mapa-controles-touch {
+  position: absolute;
+  right: 18px;
+  bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 1000;
+}
+
+.mapa-controles-touch button {
+  width: 56px;
+  height: 56px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  background: rgba(20, 32, 46, 0.85);
+  backdrop-filter: blur(8px);
+  color: var(--branco);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.4);
+  transition: transform 0.15s ease, background 0.2s ease;
+}
+
+.mapa-controles-touch button:active {
+  transform: scale(0.92);
+  background: var(--sinal);
+  color: var(--asfalto);
+}
+
+/* PINS CUSTOMIZADOS LEAFLET */
+.custom-pin {
+  display: flex;
   align-items: center;
   justify-content: center;
-  text-align: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  border: 2px solid #ffffff;
+  position: relative;
 }
 
-/* ===== 6. Telas vazias / Avisos ===== */
-.aviso {
-  padding: 20px 32px;
-  font-size: 1.4rem;
-  color: var(--texto-suave);
-  border: 2px dashed var(--texto-suave);
-  border-radius: 16px;
-  background: rgba(0, 0, 0, 0.2);
+.custom-pin span {
+  transform: rotate(45deg);
+  font-size: 18px;
 }
 
-/* ===== 7. Barra de navegação ===== */
+.custom-pin.saude { background: var(--saude-cor); }
+.custom-pin.transporte { background: var(--transporte-cor); }
+.custom-pin.servicos { background: var(--servicos-cor); }
+
+/* Pin do Usuário / Totem */
+.user-pin {
+  background: var(--sinal);
+  color: var(--asfalto);
+  font-size: 12px;
+  font-weight: 800;
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 2px solid #ffffff;
+  white-space: nowrap;
+  box-shadow: 0 0 15px rgba(255, 198, 41, 0.8);
+  animation: pulseGlow 2s infinite ease-in-out;
+}
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 10px rgba(255, 198, 41, 0.6); transform: scale(1); }
+  50% { box-shadow: 0 0 22px rgba(255, 198, 41, 1); transform: scale(1.05); }
+}
+
+/* Popups Leaflet */
+.leaflet-popup-content-wrapper {
+  background: #1f3147 !important;
+  color: #ffffff !important;
+  border-radius: 14px !important;
+  border: 1px solid var(--sinal) !important;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.6) !important;
+}
+
+.leaflet-popup-tip {
+  background: #1f3147 !important;
+}
+
+/* NAV E MODAIS */
 .barra-nav {
   position: fixed;
-  left: 0; right: 0; bottom: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   height: var(--altura-barra);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 24px;
-  padding: 0 32px;
-  background: rgba(10, 18, 28, .92);
+  padding: 0 24px;
+  background: #0a121c;
+  z-index: 2000;
 }
+
 .botao-nav {
-  min-width: 240px;
-  min-height: 76px;
-  padding: 12px 32px;
-  font-size: 1.6rem;
+  min-width: 180px;
+  min-height: 56px;
+  padding: 10px 20px;
+  font-size: 1.2rem;
   font-weight: 700;
-  border-radius: 18px;
-  border: 3px solid transparent;
-  transition: transform .15s, filter .15s;
+  border-radius: 14px;
+  border: none;
 }
-.botao-nav:hover { filter: brightness(1.15); }
-.botao-nav:active { transform: scale(.97); }
-.botao-voltar { background: var(--branco); color: var(--asfalto); }
-.botao-cancelar { background: var(--perigo); color: var(--branco); margin-left: auto; }
-.botao-voltar.invisivel { visibility: hidden; }
 
-/* ===== 8. Modais (cancelamento e inatividade) ===== */
+.botao-voltar {
+  background: var(--branco);
+  color: var(--asfalto);
+}
+
+.botao-cancelar {
+  background: var(--perigo);
+  color: var(--branco);
+  margin-left: auto;
+}
+
+.botao-voltar.invisivel {
+  visibility: hidden;
+}
+
 .fundo-modal {
-  position: fixed; inset: 0;
-  display: flex; align-items: center; justify-content: center;
-  padding: 24px;
-  background: rgba(0,0,0,.7);
-  z-index: 10;
-}
-.fundo-aviso { z-index: 20; }  /* o aviso de inatividade fica acima de tudo */
-.modal {
-  display: flex; flex-direction: column; align-items: center; gap: 24px;
-  width: min(100%, 720px);
-  padding: 40px;
-  text-align: center;
-  background: var(--asfalto-claro);
-  border: 3px solid var(--sinal);
-  border-radius: 24px;
-}
-.modal h2 { font-size: clamp(1.6rem, 4vw, 2.4rem); }
-.modal-botoes { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
-.modal .botao-cancelar { margin-left: 0; }
-
-/* ===== 9. Textos, status e áreas reservadas ===== */
-.texto-info { max-width: 900px; font-size: clamp(1.2rem, 2.4vw, 1.7rem); color: var(--texto-suave); }
-
-.grade-tres { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
-.grade-tres .cartao {
+  position: fixed;
+  inset: 0;
+  display: flex;
   align-items: center;
   justify-content: center;
+  padding: 20px;
+  background: rgba(0,0,0,.8);
+  z-index: 3000;
+}
+
+.modal {
+  width: min(100%, 500px);
+  padding: 24px;
   text-align: center;
-  min-height: 150px;
-  padding: 20px 24px;
-}
-.grade-tres .cartao-name { font-size: 1.8rem; line-height: 1.2; }
-
-.status-integracao {
-  padding: 12px 28px;
-  font-size: 1.2rem;
-  font-weight: 600;
-  background: rgba(255, 198, 41, .15);
+  background: var(--asfalto-claro);
   border: 2px solid var(--sinal);
-  border-radius: 999px;
+  border-radius: 20px;
 }
 
-.area-reservada {
-  width: min(100%, 900px);
-  padding: 24px 32px;
+.modal-botoes {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+.mensagem-indisponivel, .aviso, .area-reservada {
+  padding: 16px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.05);
   text-align: left;
-  font-size: 1.3rem;
-  color: var(--texto-suave);
-  border: 2px dashed var(--texto-suave);
-  border-radius: 16px;
-}
-.area-titulo { font-weight: 700; color: var(--branco); margin-bottom: 8px; }
-.area-reservada ul { padding-left: 28px; display: grid; gap: 6px; }
-
-.mensagem-indisponivel {
-  max-width: 900px;
-  padding: 16px 24px;
-  font-size: 1.5rem;
-  font-weight: 700;
-  border-left: 8px solid var(--sinal);
-  background: rgba(255,255,255,.08);
-  border-radius: 8px;
+  max-width: 600px;
 }
 
-/* ===== 11. Seção Cartões: etapas, painéis e botões ===== */
-.etapa {
-  display: flex; flex-direction: column; align-items: center;
-  gap: 24px;
-  width: 100%;
-}
-
-.cartao-acao {
-  align-items: center; justify-content: center; text-align: center;
-  width: min(100%, 520px);
-  min-height: 200px;
-}
-
-.botoes-linha { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; }
-.botao-principal { background: var(--sinal); color: var(--asfalto); }
-.botao-cancelar-op { background: transparent; color: var(--branco); border-color: var(--perigo); }
-
-/* Painel com pares "rótulo: valor" (usa <dl>) */
-.painel-cartao {
-  width: min(100%, 760px);
-  padding: 24px 32px;
-  text-align: left;
-  background: var(--branco);
-  color: var(--asfalto);
-  border-radius: 24px;
-}
-.painel-cartao dl { display: grid; gap: 12px; margin-top: 12px; }
-.linha-painel { display: flex; justify-content: space-between; gap: 24px; font-size: 1.4rem; }
-.linha-painel dt { color: #4a5a6c; }
-.linha-painel dd { font-weight: 700; text-align: right; }
-.linha-painel.destaque { padding-top: 12px; border-top: 3px solid var(--sinal); font-size: 2.2rem; }
-
-/* Selo que marca conteúdo fictício */
-.selo {
-  display: inline-block;
-  padding: 4px 14px;
-  font-size: 1rem; font-weight: 800;
-  color: var(--asfalto);
-  background: var(--sinal);
-  border-radius: 999px;
-}
-
-/* Extrato */
-.opcoes-identificacao { display: flex; flex-wrap: wrap; gap: 24px; justify-content: center; width: 100%; }
-.opcoes-identificacao .cartao-acao { width: min(100%, 420px); }
-
-/* Digitação do número do cartão */
-.area-teclado { display: grid; gap: 16px; justify-items: center; width: 100%; }
-.visor-numero {
-  display: block;
-  width: min(100%, 520px);
-  min-height: 88px;
-  padding: 14px 20px;
-  font-size: 2.6rem; font-weight: 800; letter-spacing: .15em;
-  background: rgba(255,255,255,.08);
-  border: 3px solid var(--sinal);
-  border-radius: 18px;
-}
-.visor-numero:empty::before { content: attr(data-placeholder); font-size: 1.5rem; font-weight: 600; letter-spacing: 0; color: var(--texto-suave); }
-.erro-campo { min-height: 1.6rem; font-size: 1.4rem; font-weight: 700; color: #ff9b9b; }
-.teclado-numerico { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; width: min(100%, 520px); }
-.tecla {
-  min-height: 88px;
-  font-size: 2.2rem; font-weight: 800;
-  color: var(--asfalto); background: var(--branco);
-  border: 0; border-radius: 18px;
-  transition: transform .15s, filter .15s;
-}
-.tecla:hover { filter: brightness(.93); }
-.tecla:active { transform: scale(.96); }
-.tecla-confirmar { background: var(--sinal); font-size: 1.5rem; }
-.tecla-apagar { color: var(--branco); background: transparent; border: 3px solid var(--texto-suave); font-size: 1.5rem; }
-
-.painel-qr { display: grid; gap: 12px; justify-items: center; }
-.qr { width: min(100%, 320px); padding: 16px; background: var(--branco); border-radius: 24px; }
-.qr svg { display: block; width: 100%; height: auto; }
-.qr-legenda { font-size: 1.3rem; font-weight: 700; color: var(--sinal); }
-.grupo-extrato { display: grid; gap: 12px; width: min(100%, 900px); }
-.grupo-extrato h4 { font-size: 1.8rem; text-align: left; padding-left: 8px; border-left: 8px solid var(--sinal); }
-.lista-extrato { list-style: none; padding: 0; display: grid; gap: 12px; width: min(100%, 900px); }
-.item-extrato {
-  display: flex; justify-content: space-between; align-items: center; gap: 24px;
-  padding: 16px 28px;
-  text-align: left;
-  background: var(--branco);
-  color: var(--asfalto);
-  border-radius: 16px;
-}
-.item-extrato div > * { display: block; }
-.item-extrato strong { font-size: 1.5rem; }
-.data-extrato { font-size: 1.2rem; color: #4a5a6c; }
-.valor-extrato { text-align: right; font-size: 1.6rem; font-weight: 800; }
-.valor-extrato .selo { margin-top: 6px; }
-
-/* Simulador de situações */
-.simulador {
-  width: min(100%, 1100px);
-  padding: 20px 28px;
-  border: 2px dashed var(--texto-suave);
-  border-radius: 16px;
-}
-.simulador-ajuda { font-size: 1.1rem; color: var(--texto-suave); margin-bottom: 14px; }
-.lista-cenarios { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
-.chip {
-  min-height: 64px;
-  padding: 10px 22px;
-  font-size: 1.3rem; font-weight: 700;
-  background: transparent;
-  border: 3px solid var(--texto-suave);
-  border-radius: 999px;
-}
-.chip[aria-pressed="true"] { background: var(--sinal); color: var(--asfalto); border-color: var(--sinal); }
-
-/* Instruções passo a passo e áreas reservadas em grade */
-.lista-passos {
-  width: min(100%, 900px);
-  padding-left: 40px;
-  display: grid; gap: 14px;
-  text-align: left;
-  font-size: 1.5rem;
-}
-.grade-reservada {
-  display: grid; gap: 20px;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  width: min(100%, 1100px);
-}
-.grade-reservada .area-reservada { width: 100%; }
-
-/* Tela de estados demonstrativos */
-.estado-icone {
-  display: grid; place-items: center;
-  width: 110px; height: 110px;
-  font-size: 3.4rem; font-weight: 800;
-  color: var(--asfalto);
-  background: var(--sinal);
-  border-radius: 50%;
-}
-#tela-estado[data-tipo="erro"] .estado-icone { background: var(--perigo); color: var(--branco); }
-
-/* ===== 12. Telas menores ===== */
-@media (max-width: 1000px) {
-  .grade-tres { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
-
-@media (max-width: 700px) {
-  .grade-opcoes, .grade-tres, .grade-reservada { grid-template-columns: 1fr; gap: 16px; }
-  .cartao { min-height: 140px; padding: 18px; }
-  .tela { overflow-y: auto; justify-content: flex-start; }
-  .botao-nav { min-width: 0; flex: 1; font-size: 1.2rem; }
-}
-
-/* Respeita quem prefere menos movimento */
-@media (prefers-reduced-motion: reduce) {
-  * { transition: none !important; }
+@media (max-width: 900px) {
+  .mapa-container { flex-direction: column; height: auto; }
+  .mapa-painel { max-width: 100%; height: 260px; }
+  .mapa-wrapper { height: 350px; }
 }
