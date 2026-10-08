@@ -14,30 +14,39 @@ const DADOS_MOCK = Object.freeze({
   avisoDemonstracao: 'MODO DEMONSTRAÇÃO — INFORMAÇÕES FICTÍCIAS',
   avisoSimulacao:
     'Esta é uma simulação de interface. Nenhum pagamento será realizado e nenhum cartão será recarregado.',
+  dicaNumeroCartao: 'Demonstração: o número do cartão de exemplo é 123.',
   avisoSimulacaoBloqueio:
     'Esta é uma simulação de interface. Nenhum cartão será bloqueado ou cancelado.',
 
   // ----- Cartão demonstrativo -----
   cartao: {
     nome: 'Cartão TCGL',
+    numero: '123',
     titular: 'Ana Beatriz Moraes',
     tipo: 'Cartão Usuário',
     status: 'Ativo',
     saldo: 42.5
   },
 
-  // ----- Movimentações de exemplo (valor positivo = entrada) -----
+  // ----- Movimentações (valor positivo = entrada). Utilizações trazem o ônibus usado -----
   extrato: [
-    { descricao: 'Utilização', rotuloData: '06/10/2026', valor: -5.0 },
-    { descricao: 'Utilização', rotuloData: '03/10/2026', valor: -5.0 },
-    { descricao: 'Recarga',    rotuloData: '30/09/2026', valor: 30.0 },
-    { descricao: 'Utilização', rotuloData: '27/09/2026', valor: -5.0 },
-    { descricao: 'Recarga',    rotuloData: '19/09/2026', valor: 25.0 }
+    { tipo: 'utilizacao', onibus: 'Ônibus 4102', rotuloData: '06/10/2026', valor: -5.0 },
+    { tipo: 'utilizacao', onibus: 'Ônibus 3187', rotuloData: '03/10/2026', valor: -5.0 },
+    { tipo: 'utilizacao', onibus: 'Ônibus 4102', rotuloData: '27/09/2026', valor: -5.0 },
+    { tipo: 'recarga', descricao: 'Recarga de 6 passes', rotuloData: '30/09/2026', valor: 30.0 },
+    { tipo: 'recarga', descricao: 'Recarga de 5 passes', rotuloData: '19/09/2026', valor: 25.0 }
   ],
 
   // ----- Recarga por passes: valor PROVISÓRIO de cada passe (trocar pelo oficial) -----
   valorPasse: 5.0,
   quantidadesPasses: [1, 2, 5, 10, 20, 40],
+
+  // ----- Formas de pagamento da recarga (apenas rótulos; nada é cobrado) -----
+  formasPagamento: [
+    { id: 'pix',     rotulo: 'Pix' },
+    { id: 'credito', rotulo: 'Cartão de crédito' },
+    { id: 'debito',  rotulo: 'Cartão de débito' }
+  ],
 
   // ----- Situações que o simulador da tela "Cartões" pode ativar -----
   cenarios: [
@@ -51,7 +60,7 @@ const DADOS_MOCK = Object.freeze({
     'nao-identificado': {
       icone: '?', tipo: 'aviso', permiteRepetir: true,
       titulo: 'Cartão não identificado',
-      mensagem: 'Não foi possível identificar o cartão. Aproxime-o novamente. (Estado demonstrativo.)'
+      mensagem: 'Não foi possível identificar o cartão. Confira o número digitado ou aproxime o cartão novamente. (Estado demonstrativo.)'
     },
     'bloqueado': {
       icone: 'B', tipo: 'erro', permiteRepetir: false,

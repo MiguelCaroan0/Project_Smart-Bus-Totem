@@ -265,6 +265,42 @@ h3 { font-size: clamp(1.5rem, 3.2vw, 2.2rem); font-weight: 700; }
 }
 
 /* Extrato */
+.opcoes-identificacao { display: flex; flex-wrap: wrap; gap: 24px; justify-content: center; width: 100%; }
+.opcoes-identificacao .cartao-acao { width: min(100%, 420px); }
+
+/* Digitação do número do cartão */
+.area-teclado { display: grid; gap: 16px; justify-items: center; width: 100%; }
+.visor-numero {
+  display: block;
+  width: min(100%, 520px);
+  min-height: 88px;
+  padding: 14px 20px;
+  font-size: 2.6rem; font-weight: 800; letter-spacing: .15em;
+  background: rgba(255,255,255,.08);
+  border: 3px solid var(--sinal);
+  border-radius: 18px;
+}
+.visor-numero:empty::before { content: attr(data-placeholder); font-size: 1.5rem; font-weight: 600; letter-spacing: 0; color: var(--texto-suave); }
+.erro-campo { min-height: 1.6rem; font-size: 1.4rem; font-weight: 700; color: #ff9b9b; }
+.teclado-numerico { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; width: min(100%, 520px); }
+.tecla {
+  min-height: 88px;
+  font-size: 2.2rem; font-weight: 800;
+  color: var(--asfalto); background: var(--branco);
+  border: 0; border-radius: 18px;
+  transition: transform .15s, filter .15s;
+}
+.tecla:hover { filter: brightness(.93); }
+.tecla:active { transform: scale(.96); }
+.tecla-confirmar { background: var(--sinal); font-size: 1.5rem; }
+.tecla-apagar { color: var(--branco); background: transparent; border: 3px solid var(--texto-suave); font-size: 1.5rem; }
+
+.painel-qr { display: grid; gap: 12px; justify-items: center; }
+.qr { width: min(100%, 320px); padding: 16px; background: var(--branco); border-radius: 24px; }
+.qr svg { display: block; width: 100%; height: auto; }
+.qr-legenda { font-size: 1.3rem; font-weight: 700; color: var(--sinal); }
+.grupo-extrato { display: grid; gap: 12px; width: min(100%, 900px); }
+.grupo-extrato h4 { font-size: 1.8rem; text-align: left; padding-left: 8px; border-left: 8px solid var(--sinal); }
 .lista-extrato { list-style: none; padding: 0; display: grid; gap: 12px; width: min(100%, 900px); }
 .item-extrato {
   display: flex; justify-content: space-between; align-items: center; gap: 24px;

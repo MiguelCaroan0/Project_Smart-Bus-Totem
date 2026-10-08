@@ -7,7 +7,7 @@ if (typeof DADOS_MOCK === 'undefined') {
   aviso.textContent = 'Erro: o arquivo data/mockData.js não foi encontrado. A pasta "data" precisa ficar ao lado do index.html.';
   document.body.prepend(aviso);
   window.DADOS_MOCK = {
-    cartao: {}, extrato: [], quantidadesPasses: [], cenarios: [],
+    cartao: {}, extrato: [], quantidadesPasses: [], formasPagamento: [], cenarios: [],
     estados: { 'erro-comunicacao': { icone: '!', tipo: 'erro', permiteRepetir: false,
       titulo: 'Dados não encontrados',
       mensagem: 'O arquivo data/mockData.js não foi carregado. Confira se a pasta "data" está ao lado do index.html.' } }
@@ -38,6 +38,8 @@ const EstadoTotem = {
   saldoAtual: 0,
   cenario: 'normal',        // situação escolhida no simulador (só demonstração)
   quantidadePasses: null,   // passes escolhidos na recarga simulada
+  formaPagamento: null,     // Pix, crédito ou débito (simulado)
+  numeroDigitado: '',       // número do cartão de transporte digitado no teclado
   acaoBloqueio: null,       // "Bloquear cartão" ou "Cancelar cartão" (simulado)
   limparSessao() {
     this.modoVozAtivo = false;
@@ -46,6 +48,8 @@ const EstadoTotem = {
     this.saldoAtual = 0;
     this.cenario = 'normal';
     this.quantidadePasses = null;
+    this.formaPagamento = null;
+    this.numeroDigitado = '';
     this.acaoBloqueio = null;
     if (window.speechSynthesis) {
       window.speechSynthesis.cancel();
@@ -226,6 +230,62 @@ function montarPainel(destino, linhas) {
   destino.replaceChildren(el('p', 'selo', 'DADOS FICTÍCIOS'), lista);
 }
 
+// Preenche uma lista do extrato; "titulo" decide o texto principal de cada linha
+function preencherExtrato(idDaLista, itens, titulo) {
+  document.getElementById(idDaLista).replaceChildren(...itens.map(function (mov) {
+    const item = el('li', 'item-extrato');
+    const textos = el('div');
+    textos.append(el('strong', null, titulo(mov)), el('span', 'data-extrato', mov.rotuloData));
+    const valor = el('div', 'valor-extrato');
+    valor.append(el('span', null, (mov.valor >= 0 ? '+ ' : '- ') + formatarMoeda(Math.abs(mov.valor))));
+    item.append(textos, valor);
+    return item;
+  }));
+}
+
+// Desenha um QR Code FICTÍCIO (só visual): três quadrados de canto + módulos aleatórios.
+// Não contém dados de pagamento e não deve ser lido por aplicativos.
+function desenharQrFicticio(destino, semente) {
+  const NS = 'http://www.w3.org/2000/svg';
+  const N = 25, MARGEM = 2;
+  let estado = semente % 2147483646 + 1;                       // gerador pseudoaleatório simples
+  const aleatorio = () => (estado = (estado * 16807) % 2147483647) / 2147483647;
+  const cantos = [[0, 0], [N - 7, 0], [0, N - 7]];
+
+  function modulo(x, y) {
+    for (const [cx, cy] of cantos) {
+      const dx = x - cx, dy = y - cy;
+      if (dx >= -1 && dx <= 7 && dy >= -1 && dy <= 7) {         // área do quadrado de canto + respiro
+        if (dx < 0 || dy < 0 || dx > 6 || dy > 6) return false;
+        const borda = dx === 0 || dy === 0 || dx === 6 || dy === 6;
+        const centro = dx >= 2 && dx <= 4 && dy >= 2 && dy <= 4;
+        return borda || centro;
+      }
+    }
+    return aleatorio() > 0.5;
+  }
+
+  const tamanho = N + MARGEM * 2;
+  const svg = document.createElementNS(NS, 'svg');
+  svg.setAttribute('viewBox', `0 0 ${tamanho} ${tamanho}`);
+  svg.setAttribute('role', 'img');
+  svg.setAttribute('aria-label', 'QR Code fictício de demonstração');
+  svg.setAttribute('shape-rendering', 'crispEdges');
+  for (let y = 0; y < N; y++) {
+    for (let x = 0; x < N; x++) {
+      if (!modulo(x, y)) continue;
+      const quadrado = document.createElementNS(NS, 'rect');
+      quadrado.setAttribute('x', x + MARGEM);
+      quadrado.setAttribute('y', y + MARGEM);
+      quadrado.setAttribute('width', 1);
+      quadrado.setAttribute('height', 1);
+      quadrado.setAttribute('fill', '#14202e');
+      svg.append(quadrado);
+    }
+  }
+  destino.replaceChildren(svg);
+}
+
 // Mostra uma etapa de uma tela e esconde as demais etapas dessa mesma tela
 function mostrarEtapa(idDaTela, nomeDaEtapa) {
   const tela = document.getElementById(idDaTela);
@@ -269,7 +329,7 @@ const ENTRADAS_DE_TELA = {
   'tela-cartoes': atualizarBotoesCenario,
   'tela-saldo':   () => mostrarEtapa('tela-saldo', 'aproximar'),
   'tela-extrato': () => mostrarEtapa('tela-extrato', 'aproximar'),
-  'tela-recarga': () => { EstadoTotem.quantidadePasses = null; mostrarEtapa('tela-recarga', 'identificar'); },
+  'tela-recarga': () => { EstadoTotem.quantidadePasses = null; EstadoTotem.formaPagamento = null; mostrarEtapa('tela-recarga', 'identificar'); },
   'tela-bloqueio': () => { EstadoTotem.acaoBloqueio = null; mostrarEtapa('tela-bloqueio', 'identificar'); }
 };
 
@@ -291,8 +351,9 @@ function simularCenario(contexto) {
 }
 
 const ServicoCartoes = {
-  async identificarCartao() {                    // futuro: leitura do cartão + GET /cartoes/identificar
+  async identificarCartao(numero) {              // futuro: leitura do cartão ou GET /cartoes/{numero}
     simularCenario('identificacao');
+    if (numero !== undefined && numero !== DADOS_MOCK.cartao.numero) throw new ErroCartao('nao-identificado');
     const { saldo, ...identificacao } = DADOS_MOCK.cartao;  // identificação SEM o saldo
     return identificacao;
   },
@@ -305,10 +366,13 @@ const ServicoCartoes = {
   async listarQuantidadesPasses() {              // futuro: GET /recargas/opcoes
     return { quantidades: DADOS_MOCK.quantidadesPasses, valorPasse: DADOS_MOCK.valorPasse };
   },
-  async simularRecarga(quantidade) {             // futuro: POST /recargas (com pagamento real)
+  async listarFormasPagamento() {                // futuro: GET /recargas/formas-pagamento
+    return DADOS_MOCK.formasPagamento;
+  },
+  async simularRecarga(quantidade, formaPagamento) {  // futuro: POST /recargas (com pagamento real)
     simularCenario('recarga');
     const valorTotal = Math.round(quantidade * DADOS_MOCK.valorPasse * 100) / 100;
-    return { status: 'simulado', quantidade, valorTotal };
+    return { status: 'simulado', quantidade, formaPagamento, valorTotal };
   },
   async simularBloqueio(tipo) {                  // futuro: POST /cartoes/{id}/bloqueio (autenticado)
     return { status: 'simulado', tipo };
@@ -325,85 +389,175 @@ async function executar(tarefa) {
   }
 }
 
-async function identificarEGuardar() {
-  const cartao = await ServicoCartoes.identificarCartao();
+// Sem argumento = cartão aproximado; com argumento = número digitado
+async function identificarEGuardar(numero) {
+  const cartao = await ServicoCartoes.identificarCartao(numero);
   EstadoTotem.cartaoDetectado = cartao;
   return cartao;
 }
 
+// ===== 10a. O que acontece DEPOIS de identificar o cartão (aproximado ou digitado) =====
+async function continuarSaldo() {
+  const cartao = EstadoTotem.cartaoDetectado;
+  EstadoTotem.saldoAtual = await ServicoCartoes.consultarSaldo();   // só agora o saldo é lido
+  montarPainel(document.getElementById('saldo-resultado'), [
+    ['Cartão', cartao.nome],
+    ['Número do cartão', cartao.numero],
+    ['Titular', cartao.titular],
+    ['Tipo', cartao.tipo],
+    ['Status', cartao.status],
+    ['Saldo', formatarMoeda(EstadoTotem.saldoAtual), true]
+  ]);
+  mostrarEtapa('tela-saldo', 'resultado');
+}
+
+async function continuarExtrato() {
+  const movimentacoes = await ServicoCartoes.consultarExtrato();
+  preencherExtrato('lista-utilizacoes', movimentacoes.filter((m) => m.tipo === 'utilizacao'),
+    (m) => m.onibus);                       // utilizações mostram o ônibus usado
+  preencherExtrato('lista-recargas', movimentacoes.filter((m) => m.tipo === 'recarga'),
+    (m) => m.descricao);
+  mostrarEtapa('tela-extrato', 'resultado');
+}
+
+async function continuarRecarga() {
+  const opcoes = await ServicoCartoes.listarQuantidadesPasses();
+  const formas = await ServicoCartoes.listarFormasPagamento();
+  EstadoTotem.valorPasse = opcoes.valorPasse;
+  EstadoTotem.formas = formas;
+  document.getElementById('lista-valores').replaceChildren(...opcoes.quantidades.map(function (quantidade) {
+    const botao = el('button', 'cartao');
+    botao.dataset.acao = 'recarga-escolher';
+    botao.dataset.quantidade = quantidade;
+    botao.append(el('span', 'cartao-name', textoPasses(quantidade)));
+    return botao;
+  }));
+  document.getElementById('lista-pagamento').replaceChildren(...formas.map(function (forma) {
+    const botao = el('button', 'cartao');
+    botao.dataset.acao = 'recarga-pagamento';
+    botao.dataset.forma = forma.id;
+    botao.append(el('span', 'cartao-name', forma.rotulo));
+    return botao;
+  }));
+  mostrarEtapa('tela-recarga', 'valor');
+}
+
+function continuarBloqueio() {
+  mostrarEtapa('tela-bloqueio', 'acao');
+}
+
+// Para cada tela com identificação: etapa inicial e o que fazer depois de identificar
+const IDENTIFICACAO = {
+  'tela-saldo':    { etapaInicial: 'aproximar',  continuar: continuarSaldo },
+  'tela-extrato':  { etapaInicial: 'aproximar',  continuar: continuarExtrato },
+  'tela-recarga':  { etapaInicial: 'identificar', continuar: continuarRecarga },
+  'tela-bloqueio': { etapaInicial: 'identificar', continuar: continuarBloqueio }
+};
+
+// Teclado numérico na tela: monta os botões dentro de cada [data-teclado]
+function montarTeclados() {
+  function tecla(rotulo, acao, classeExtra, valor) {
+    const botao = el('button', 'tecla' + (classeExtra ? ' ' + classeExtra : ''), rotulo);
+    botao.dataset.acao = acao;
+    if (valor !== undefined) botao.dataset.tecla = valor;
+    return botao;
+  }
+  document.querySelectorAll('[data-teclado]').forEach(function (area) {
+    const visor = el('output', 'visor-numero');
+    visor.dataset.placeholder = 'Número do cartão';
+    visor.setAttribute('aria-label', 'Número do cartão digitado');
+    const erro = el('p', 'erro-campo');
+    erro.setAttribute('role', 'alert');
+    const grade = el('div', 'teclado-numerico');
+    ['1', '2', '3', '4', '5', '6', '7', '8', '9'].forEach((n) => grade.append(tecla(n, 'tecla', '', n)));
+    grade.append(tecla('Apagar', 'tecla-apagar', 'tecla-apagar'), tecla('0', 'tecla', '', '0'),
+                 tecla('Confirmar', 'tecla-confirmar', 'tecla-confirmar'));
+    area.replaceChildren(visor, erro, grade);
+  });
+}
+
+function atualizarVisor() {
+  document.querySelector(`#${telaAtual} .visor-numero`).textContent = EstadoTotem.numeroDigitado;
+  document.querySelector(`#${telaAtual} .erro-campo`).textContent = '';
+}
+
 // ===== 10. Seção Cartões: ações dos botões (data-acao="...") =====
 const ACOES = {
-  'saldo-aproximar': () => executar(async function () {
-    const cartao = await identificarEGuardar();
-    EstadoTotem.saldoAtual = await ServicoCartoes.consultarSaldo();   // só agora o saldo é lido
-    montarPainel(document.getElementById('saldo-resultado'), [
-      ['Cartão', cartao.nome],
-      ['Titular', cartao.titular],
-      ['Tipo', cartao.tipo],
-      ['Status', cartao.status],
-      ['Saldo', formatarMoeda(EstadoTotem.saldoAtual), true]
-    ]);
-    mostrarEtapa('tela-saldo', 'resultado');
-  }),
+  'saldo-aproximar':   () => executar(async () => { await identificarEGuardar(); await continuarSaldo(); }),
+  'extrato-aproximar': () => executar(async () => { await identificarEGuardar(); await continuarExtrato(); }),
+  'recarga-aproximar': () => executar(async () => { await identificarEGuardar(); await continuarRecarga(); }),
+  'bloqueio-aproximar': () => executar(async () => { await identificarEGuardar(); continuarBloqueio(); }),
 
-  'extrato-aproximar': () => executar(async function () {
-    await identificarEGuardar();
-    const movimentacoes = await ServicoCartoes.consultarExtrato();
-    const lista = document.getElementById('lista-extrato');
-    lista.replaceChildren(...movimentacoes.map(function (mov) {
-      const item = el('li', 'item-extrato');
-      const textos = el('div');
-      textos.append(el('strong', null, mov.descricao), el('span', 'data-extrato', mov.rotuloData));
-      const direita = el('div', 'valor-extrato');
-      const sinal = mov.valor >= 0 ? '+ ' : '- ';
-      direita.append(el('span', null, sinal + formatarMoeda(Math.abs(mov.valor))));
-      item.append(textos, direita);
-      return item;
-    }));
-    mostrarEtapa('tela-extrato', 'resultado');
-  }),
-
-  'recarga-aproximar': () => executar(async function () {
-    await identificarEGuardar();
-    const opcoes = await ServicoCartoes.listarQuantidadesPasses();
-    EstadoTotem.valorPasse = opcoes.valorPasse;
-    document.getElementById('lista-valores').replaceChildren(...opcoes.quantidades.map(function (quantidade) {
-      const botao = el('button', 'cartao');
-      botao.dataset.acao = 'recarga-escolher';
-      botao.dataset.quantidade = quantidade;
-      botao.append(el('span', 'cartao-name', textoPasses(quantidade)));
-      return botao;
-    }));
-    mostrarEtapa('tela-recarga', 'valor');
-  }),
+  // --- Digitar o número do cartão (alternativa a "Aproximar cartão") ---
+  'identificar-digitando': () => {
+    EstadoTotem.numeroDigitado = '';
+    atualizarVisor();
+    mostrarEtapa(telaAtual, 'digitar');
+  },
+  'voltar-identificacao': () => mostrarEtapa(telaAtual, IDENTIFICACAO[telaAtual].etapaInicial),
+  'tecla': (botao) => {
+    if (EstadoTotem.numeroDigitado.length < 16) EstadoTotem.numeroDigitado += botao.dataset.tecla;
+    atualizarVisor();
+  },
+  'tecla-apagar': () => {
+    EstadoTotem.numeroDigitado = EstadoTotem.numeroDigitado.slice(0, -1);
+    atualizarVisor();
+  },
+  'tecla-confirmar': () => {
+    if (!EstadoTotem.numeroDigitado) {
+      document.querySelector(`#${telaAtual} .erro-campo`).textContent = 'Digite o número do cartão.';
+      return;
+    }
+    const continuar = IDENTIFICACAO[telaAtual].continuar;
+    executar(async () => {
+      await identificarEGuardar(EstadoTotem.numeroDigitado);
+      await continuar();
+    });
+  },
 
   'recarga-escolher': (botao) => {
     EstadoTotem.quantidadePasses = Number(botao.dataset.quantidade);
+    mostrarEtapa('tela-recarga', 'pagamento');
+  },
+
+  'recarga-pagamento': (botao) => {
+    EstadoTotem.formaPagamento = EstadoTotem.formas.find((f) => f.id === botao.dataset.forma);
     const total = EstadoTotem.quantidadePasses * EstadoTotem.valorPasse;
     montarPainel(document.getElementById('recarga-resumo'), [
       ['Cartão', EstadoTotem.cartaoDetectado.nome],
       ['Quantidade', textoPasses(EstadoTotem.quantidadePasses)],
-      ['Valor de cada passe', formatarMoeda(EstadoTotem.valorPasse)],
+      ['Forma de pagamento', EstadoTotem.formaPagamento.rotulo],
       ['Valor final', formatarMoeda(total), true]
     ]);
     mostrarEtapa('tela-recarga', 'confirmar');
   },
 
-  'recarga-trocar-valor': () => mostrarEtapa('tela-recarga', 'valor'),
+  'recarga-trocar-pagamento': () => mostrarEtapa('tela-recarga', 'pagamento'),
 
-  'recarga-confirmar': () => executar(async function () {
-    const resultado = await ServicoCartoes.simularRecarga(EstadoTotem.quantidadePasses);
+  // Depois de confirmar, o caminho depende da forma de pagamento
+  'recarga-confirmar': () => {
+    const total = EstadoTotem.quantidadePasses * EstadoTotem.valorPasse;
+    const forma = EstadoTotem.formaPagamento;
+    if (forma.id === 'pix') {
+      desenharQrFicticio(document.getElementById('qr-ficticio'), Math.round(total * 100) + 1);
+      document.getElementById('pix-valor').textContent = 'Valor a pagar: ' + formatarMoeda(total);
+      mostrarEtapa('tela-recarga', 'pix');
+    } else {
+      document.getElementById('cartao-instrucao').textContent =
+        `Aproxime o seu ${forma.rotulo.toLowerCase()} da leitora do totem para pagar ${formatarMoeda(total)}.`;
+      mostrarEtapa('tela-recarga', 'cartao');
+    }
+  },
+
+  'recarga-finalizar': () => executar(async function () {
+    const resultado = await ServicoCartoes.simularRecarga(EstadoTotem.quantidadePasses, EstadoTotem.formaPagamento.rotulo);
     montarPainel(document.getElementById('recarga-resultado'), [
       ['Cartão', EstadoTotem.cartaoDetectado.nome],
       ['Quantidade', textoPasses(resultado.quantidade)],
+      ['Forma de pagamento', resultado.formaPagamento],
       ['Valor final', formatarMoeda(resultado.valorTotal), true]
     ]);
     mostrarEtapa('tela-recarga', 'resultado');
-  }),
-
-  'bloqueio-aproximar': () => executar(async function () {
-    await identificarEGuardar();
-    mostrarEtapa('tela-bloqueio', 'acao');
   }),
 
   'bloqueio-escolher': (botao) => {
@@ -493,6 +647,12 @@ telaInicial.addEventListener('click', function () {
 document.addEventListener('keydown', function (evento) {
   if (evento.key === 'Escape') {
     fecharConfirmacaoCancelamento();
+  }
+  // Teclado físico: digita o número do cartão quando o teclado da tela está aberto
+  if (document.querySelector(`#${telaAtual} [data-etapa="digitar"]:not(.oculta)`)) {
+    if (/^\d$/.test(evento.key)) ACOES['tecla']({ dataset: { tecla: evento.key } });
+    else if (evento.key === 'Backspace') ACOES['tecla-apagar']();
+    else if (evento.key === 'Enter' && !(evento.target.closest && evento.target.closest('button'))) ACOES['tecla-confirmar']();
   }
   if (telaAtual === 'tela-inicial' && (evento.key === 'Enter' || evento.key === ' ')) {
     evento.preventDefault();
@@ -609,4 +769,5 @@ document.querySelectorAll('.tela h2, .tela h3, .modal h2').forEach(function (tit
 });
 
 renderizarCenarios();
+montarTeclados();
 mostrarTela('tela-inicial', false);

@@ -106,11 +106,25 @@
     <h2>Consultar saldo</h2>
 
     <div class="etapa" data-etapa="aproximar">
-      <h3>Aproxime o cartão</h3>
-      <p class="texto-info">Nesta demonstração, toque no botão abaixo. Nenhuma leitura real é feita.</p>
-      <button class="cartao cartao-acao" data-acao="saldo-aproximar">
-        <span class="cartao-name">Aproximar cartão</span>
-      </button>
+      <h3>Identifique o cartão</h3>
+      <p class="texto-info">Aproxime o cartão ou digite o número dele. Nenhuma leitura real é feita.</p>
+      <div class="opcoes-identificacao">
+        <button class="cartao cartao-acao" data-acao="saldo-aproximar">
+          <span class="cartao-name">Aproximar cartão</span>
+        </button>
+        <button class="cartao cartao-acao" data-acao="identificar-digitando">
+          <span class="cartao-name">Digitar número do cartão</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="etapa oculta" data-etapa="digitar">
+      <h3>Digite o número do cartão</h3>
+      <p class="texto-info" data-texto="dicaNumeroCartao"></p>
+      <div class="area-teclado" data-teclado></div>
+      <div class="botoes-linha">
+        <button class="botao-nav botao-voltar" data-acao="voltar-identificacao">Aproximar cartão</button>
+      </div>
     </div>
 
     <div class="etapa oculta" data-etapa="resultado">
@@ -124,53 +138,117 @@
     <h2>Consultar extrato</h2>
 
     <div class="etapa" data-etapa="aproximar">
-      <h3>Aproxime o cartão</h3>
-      <p class="texto-info">Nesta demonstração, toque no botão abaixo. Nenhuma leitura real é feita.</p>
-      <button class="cartao cartao-acao" data-acao="extrato-aproximar">
-        <span class="cartao-name">Aproximar cartão</span>
-      </button>
+      <h3>Identifique o cartão</h3>
+      <p class="texto-info">Aproxime o cartão ou digite o número dele. Nenhuma leitura real é feita.</p>
+      <div class="opcoes-identificacao">
+        <button class="cartao cartao-acao" data-acao="extrato-aproximar">
+          <span class="cartao-name">Aproximar cartão</span>
+        </button>
+        <button class="cartao cartao-acao" data-acao="identificar-digitando">
+          <span class="cartao-name">Digitar número do cartão</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="etapa oculta" data-etapa="digitar">
+      <h3>Digite o número do cartão</h3>
+      <p class="texto-info" data-texto="dicaNumeroCartao"></p>
+      <div class="area-teclado" data-teclado></div>
+      <div class="botoes-linha">
+        <button class="botao-nav botao-voltar" data-acao="voltar-identificacao">Aproximar cartão</button>
+      </div>
     </div>
 
     <div class="etapa oculta" data-etapa="resultado">
       <h3>Movimentações de exemplo</h3>
       <p class="texto-info">Todas as linhas abaixo são exemplos fictícios.</p>
-      <ul id="lista-extrato" class="lista-extrato"></ul>
+      <div class="grupo-extrato">
+        <h4>Utilizações</h4>
+        <ul id="lista-utilizacoes" class="lista-extrato"></ul>
+      </div>
+      <div class="grupo-extrato">
+        <h4>Recargas</h4>
+        <ul id="lista-recargas" class="lista-extrato"></ul>
+      </div>
     </div>
   </div>
 
-  <!-- Recarregar cartão (4 etapas: identificar, valor, confirmar, resultado) -->
+  <!-- Recarregar cartão (6 etapas: identificar, passes, forma de pagamento, confirmar, pagar, resultado) -->
   <div id="tela-recarga" class="tela secao-cartoes">
     <h2>Recarregar cartão</h2>
 
     <div class="etapa" data-etapa="identificar">
-      <h3>Etapa 1 de 4: identifique o cartão</h3>
+      <h3>Etapa 1 de 6: identifique o cartão</h3>
       <p class="texto-info">Nenhum pagamento será realizado e nenhum cartão será recarregado.</p>
-      <button class="cartao cartao-acao" data-acao="recarga-aproximar">
-        <span class="cartao-name">Aproximar cartão</span>
-      </button>
-    </div>
-
-    <div class="etapa oculta" data-etapa="valor">
-      <h3>Etapa 2 de 4: escolha a quantidade de passes</h3>
-      <div id="lista-valores" class="grade-opcoes grade-tres"></div>
-      <div class="botoes-linha">
-        <button class="botao-nav botao-cancelar-op" data-acao="cancelar-operacao">Cancelar operação</button>
+      <div class="opcoes-identificacao">
+        <button class="cartao cartao-acao" data-acao="recarga-aproximar">
+          <span class="cartao-name">Aproximar cartão</span>
+        </button>
+        <button class="cartao cartao-acao" data-acao="identificar-digitando">
+          <span class="cartao-name">Digitar número do cartão</span>
+        </button>
       </div>
     </div>
 
+    <div class="etapa oculta" data-etapa="digitar">
+      <h3>Digite o número do cartão</h3>
+      <p class="texto-info" data-texto="dicaNumeroCartao"></p>
+      <div class="area-teclado" data-teclado></div>
+      <div class="botoes-linha">
+        <button class="botao-nav botao-voltar" data-acao="voltar-identificacao">Aproximar cartão</button>
+      </div>
+    </div>
+
+    <div class="etapa oculta" data-etapa="valor">
+      <h3>Etapa 2 de 6: escolha a quantidade de passes</h3>
+      <div id="lista-valores" class="grade-opcoes grade-tres"></div>
+    </div>
+
+    <div class="etapa oculta" data-etapa="pagamento">
+      <h3>Etapa 3 de 6: escolha a forma de pagamento</h3>
+      <div id="lista-pagamento" class="grade-opcoes grade-tres"></div>
+    </div>
+
     <div class="etapa oculta" data-etapa="confirmar">
-      <h3>Etapa 3 de 4: confirme a simulação</h3>
+      <h3>Etapa 4 de 6: confirme o pagamento</h3>
       <div id="recarga-resumo" class="painel-cartao"></div>
       <div class="mensagem-indisponivel" data-texto="avisoSimulacao"></div>
       <div class="botoes-linha">
-        <button class="botao-nav botao-principal" data-acao="recarga-confirmar">Confirmar simulação</button>
-        <button class="botao-nav botao-voltar" data-acao="recarga-trocar-valor">Escolher outro valor</button>
-        <button class="botao-nav botao-cancelar-op" data-acao="cancelar-operacao">Cancelar operação</button>
+        <button class="botao-nav botao-principal" data-acao="recarga-confirmar">Confirmar pagamento</button>
+        <button class="botao-nav botao-voltar" data-acao="recarga-trocar-pagamento">Trocar pagamento</button>
+      </div>
+    </div>
+
+    <!-- Etapa 5 (Pix): QR Code fictício -->
+    <div class="etapa oculta" data-etapa="pix">
+      <h3>Etapa 5 de 6: pague com Pix</h3>
+      <div class="painel-qr">
+        <div id="qr-ficticio" class="qr"></div>
+        <p class="qr-legenda">QR Code fictício. Não é um pagamento real.</p>
+      </div>
+      <div id="pix-valor" class="mensagem-indisponivel"></div>
+      <p class="texto-info">Abra o aplicativo do seu banco e aponte a câmera para o QR Code.</p>
+      <div class="botoes-linha">
+        <button class="botao-nav botao-principal" data-acao="recarga-finalizar">Simular pagamento realizado</button>
+        <button class="botao-nav botao-voltar" data-acao="recarga-trocar-pagamento">Trocar pagamento</button>
+      </div>
+    </div>
+
+    <!-- Etapa 5 (crédito ou débito): aproximar o cartão -->
+    <div class="etapa oculta" data-etapa="cartao">
+      <h3>Etapa 5 de 6: aproxime o cartão</h3>
+      <p id="cartao-instrucao" class="texto-info"></p>
+      <button class="cartao cartao-acao" data-acao="recarga-finalizar">
+        <span class="cartao-name">Simular aproximação</span>
+        <span class="cartao-desc">Nenhuma leitura real é feita</span>
+      </button>
+      <div class="botoes-linha">
+        <button class="botao-nav botao-voltar" data-acao="recarga-trocar-pagamento">Trocar pagamento</button>
       </div>
     </div>
 
     <div class="etapa oculta" data-etapa="resultado">
-      <h3>Etapa 4 de 4: resultado da simulação</h3>
+      <h3>Etapa 6 de 6: resultado da simulação</h3>
       <div id="recarga-resultado" class="painel-cartao"></div>
       <div class="mensagem-indisponivel">Simulação concluída. Nenhum pagamento foi realizado e nenhum saldo foi alterado.</div>
       <div class="botoes-linha">
@@ -186,9 +264,23 @@
     <div class="etapa" data-etapa="identificar">
       <h3>Etapa 1 de 4: identifique o cartão</h3>
       <p class="texto-info">Fluxo demonstrativo. Em um sistema real, esta ação exigiria um canal oficial e autenticado. Nenhum cartão será bloqueado.</p>
-      <button class="cartao cartao-acao" data-acao="bloqueio-aproximar">
-        <span class="cartao-name">Aproximar cartão</span>
-      </button>
+      <div class="opcoes-identificacao">
+        <button class="cartao cartao-acao" data-acao="bloqueio-aproximar">
+          <span class="cartao-name">Aproximar cartão</span>
+        </button>
+        <button class="cartao cartao-acao" data-acao="identificar-digitando">
+          <span class="cartao-name">Digitar número do cartão</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="etapa oculta" data-etapa="digitar">
+      <h3>Digite o número do cartão</h3>
+      <p class="texto-info" data-texto="dicaNumeroCartao"></p>
+      <div class="area-teclado" data-teclado></div>
+      <div class="botoes-linha">
+        <button class="botao-nav botao-voltar" data-acao="voltar-identificacao">Aproximar cartão</button>
+      </div>
     </div>
 
     <div class="etapa oculta" data-etapa="acao">
