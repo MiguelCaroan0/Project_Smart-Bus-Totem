@@ -11,6 +11,8 @@ const telaInicial = document.getElementById('tela-inicial');
 let mapaInstancia = null;
 let marcadoresGrupo = null;
 let marcadorUsuario = null;
+let rotaLinha = null;
+let camadaTileAtual = null;
 
 // Centro de Londrina (Ponto Padrão)
 const CENTRO_LONDRINA = [-23.3106, -51.1628];
@@ -22,12 +24,18 @@ const LIMITES_REGIAO = [
   [-23.1800, -50.9800]  // Nordeste
 ];
 
+// Configuração de Camadas
+const TILE_LAYERS = {
+  dark: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+  claro: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+  satelite: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
+};
+
 function estaDentroDosLimites(lat, lng) {
   const [sw, ne] = LIMITES_REGIAO;
   return lat >= sw[0] && lat <= ne[0] && lng >= sw[1] && lng <= ne[1];
 }
 
-// Cálculo de distância Haversine em KM
 function calcularDistanciaKm(lat1, lon1, lat2, lon2) {
   const R = 6371;
   const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -37,15 +45,16 @@ function calcularDistanciaKm(lat1, lon1, lat2, lon2) {
     Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
     Math.sin(dLon/2) * Math.sin(dLon/2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-  return (R * c).toFixed(1);
+  return parseFloat((R * c).toFixed(1));
 }
 
-// ===== 2. Dados de Locais =====
+// ===== 2. Base de Dados de Locais =====
 const LOCAIS_REGIAO = [
-  // LONDRINA
+  // LONDRINA - Saúde
   {
     id: 1,
-    nome: "UPA 24h Sabará (Londrina)",
+    nome: "UPA 24h Sabará",
+    cidade: "Londrina",
     categoria: "saude",
     lat: -23.3091,
     lng: -51.1896,
@@ -56,7 +65,8 @@ const LOCAIS_REGIAO = [
   },
   {
     id: 2,
-    nome: "UPA 24h Jardim Sol (Londrina)",
+    nome: "UPA 24h Jardim Sol",
+    cidade: "Londrina",
     categoria: "saude",
     lat: -23.3031,
     lng: -51.1712,
@@ -68,6 +78,7 @@ const LOCAIS_REGIAO = [
   {
     id: 3,
     nome: "Hospital Universitário (HU / UEL)",
+    cidade: "Londrina",
     categoria: "saude",
     lat: -23.3283,
     lng: -51.1343,
@@ -78,7 +89,22 @@ const LOCAIS_REGIAO = [
   },
   {
     id: 4,
+    nome: "Santa Casa de Londrina",
+    cidade: "Londrina",
+    categoria: "saude",
+    lat: -23.3075,
+    lng: -51.1558,
+    endereco: "R. Pará, 680 - Centro",
+    horario: "Atendimento 24 Horas",
+    fone: "(43) 3373-1500",
+    status: "Hospital Geral"
+  },
+
+  // LONDRINA - Transporte e Serviços
+  {
+    id: 5,
     nome: "Terminal Central de Londrina",
+    cidade: "Londrina",
     categoria: "transporte",
     lat: -23.3082,
     lng: -51.1610,
@@ -88,8 +114,33 @@ const LOCAIS_REGIAO = [
     status: "Integração Urbana Londrina"
   },
   {
-    id: 5,
+    id: 6,
+    nome: "Terminal Rodoviário de Londrina",
+    cidade: "Londrina",
+    categoria: "transporte",
+    lat: -23.3045,
+    lng: -51.1502,
+    endereco: "Av. Dez de Dezembro, 1800",
+    horario: "Funcionamento 24 Horas",
+    fone: "(43) 3372-1800",
+    status: "Transporte Intermunicipal"
+  },
+  {
+    id: 7,
+    nome: "Aeroporto de Londrina - Gov. José Richa",
+    cidade: "Londrina",
+    categoria: "transporte",
+    lat: -23.3336,
+    lng: -51.1397,
+    endereco: "R. Salgado Filho, s/n - Aeroporto",
+    horario: "Funcionamento 24 Horas",
+    fone: "(43) 3379-2000",
+    status: "Aeroporto Regional"
+  },
+  {
+    id: 8,
     nome: "Prefeitura Municipal de Londrina",
+    cidade: "Londrina",
     categoria: "servicos",
     lat: -23.3228,
     lng: -51.1685,
@@ -101,8 +152,9 @@ const LOCAIS_REGIAO = [
 
   // CAMBÉ
   {
-    id: 6,
+    id: 9,
     nome: "UPA 24h 28 de Outubro (Cambé)",
+    cidade: "Cambé",
     categoria: "saude",
     lat: -23.2798,
     lng: -51.2785,
@@ -112,8 +164,9 @@ const LOCAIS_REGIAO = [
     status: "Pronto Atendimento 24h"
   },
   {
-    id: 7,
+    id: 10,
     nome: "Terminal Urbano de Cambé",
+    cidade: "Cambé",
     categoria: "transporte",
     lat: -23.2755,
     lng: -51.2770,
@@ -122,11 +175,24 @@ const LOCAIS_REGIAO = [
     fone: "(43) 3174-0280",
     status: "Terminal Metropolitano"
   },
+  {
+    id: 11,
+    nome: "Prefeitura Municipal de Cambé",
+    cidade: "Cambé",
+    categoria: "servicos",
+    lat: -23.2762,
+    lng: -51.2788,
+    endereco: "R. Pará, 264 - Centro",
+    horario: "Segunda a Sexta: 08h30 às 17h",
+    fone: "(43) 3174-0200",
+    status: "Sede Administrativa"
+  },
 
   // IBIPORÃ
   {
-    id: 8,
+    id: 12,
     nome: "UPA 24h de Ibiporã",
+    cidade: "Ibiporã",
     categoria: "saude",
     lat: -23.2690,
     lng: -51.0510,
@@ -136,8 +202,9 @@ const LOCAIS_REGIAO = [
     status: "Pronto Atendimento 24h"
   },
   {
-    id: 9,
+    id: 13,
     nome: "Terminal Urbano de Ibiporã",
+    cidade: "Ibiporã",
     categoria: "transporte",
     lat: -23.2680,
     lng: -51.0475,
@@ -163,7 +230,7 @@ const TELA_PAI = {
 
 let telaAtual = 'tela-inicial';
 
-// ===== 3. Navegação =====
+// ===== 3. Navegação com Renderização do Mapa =====
 function mostrarTela(idDaTela) {
   telaAtual = idDaTela;
 
@@ -171,14 +238,16 @@ function mostrarTela(idDaTela) {
   atualizarBarra(idDaTela);
 
   if (idDaTela === 'tela-mapas') {
+    // Timeout estendido para sincronizar com a exibição do CSS Flexbox
     setTimeout(() => {
       if (!mapaInstancia) {
         inicializarMapa();
-      } else {
+      }
+      if (mapaInstancia) {
         mapaInstancia.invalidateSize(true);
       }
       obterGeolocalizacao();
-    }, 200);
+    }, 300);
   }
 }
 
@@ -217,18 +286,18 @@ function atualizarMarcadorUsuario(texto) {
   const userIcon = L.divIcon({
     className: '',
     html: `<div class="user-pin">${texto}</div>`,
-    iconSize: [140, 30],
-    iconAnchor: [70, 15]
+    iconSize: [160, 36],
+    iconAnchor: [80, 18]
   });
 
   if (marcadorUsuario) {
     marcadorUsuario.setLatLng(usuarioCoordenadas).setIcon(userIcon);
   } else {
-    marcadorUsuario = L.marker(usuarioCoordenadas, { icon: userIcon }).addTo(mapaInstancia);
+    marcadorUsuario = L.marker(usuarioCoordenadas, { icon: userIcon, zIndexOffset: 1000 }).addTo(mapaInstancia);
   }
 }
 
-// ===== 5. Lógica do Mapa =====
+// ===== 5. Lógica Completa do Mapa =====
 function inicializarMapa() {
   const container = document.getElementById('mapa-canvas');
   if (!container) return;
@@ -241,11 +310,10 @@ function inicializarMapa() {
   mapaInstancia = L.map('mapa-canvas', {
     zoomControl: false,
     maxBounds: LIMITES_REGIAO,
-    maxBoundsViscosity: 0.8
+    maxBoundsViscosity: 0.85
   }).setView(usuarioCoordenadas, 13);
 
-  // Tiles Dark CartoDB
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+  camadaTileAtual = L.tileLayer(TILE_LAYERS.dark, {
     maxZoom: 19,
     minZoom: 10,
     subdomains: 'abcd',
@@ -254,57 +322,112 @@ function inicializarMapa() {
 
   marcadoresGrupo = L.layerGroup().addTo(mapaInstancia);
 
-  atualizarMapaELista('tudo', '');
+  atualizarMapaELista();
 
   setTimeout(() => {
-    mapaInstancia.invalidateSize(true);
+    if (mapaInstancia) mapaInstancia.invalidateSize(true);
   }, 100);
 
-  // Eventos de Busca e Filtro
+  // --- Eventos da Busca ---
   const inputBusca = document.getElementById('busca-local');
+  const btnLimpar = document.getElementById('btn-limpar-busca');
+
   if (inputBusca) {
     inputBusca.addEventListener('input', (e) => {
-      const termo = e.target.value.toLowerCase();
-      const catAtiva = document.querySelector('.btn-filtro.ativo')?.dataset.categoria || 'tudo';
-      atualizarMapaELista(catAtiva, termo);
+      const termo = e.target.value.trim();
+      btnLimpar.classList.toggle('oculta', termo === '');
+      atualizarMapaELista();
     });
   }
 
+  if (btnLimpar) {
+    btnLimpar.addEventListener('click', () => {
+      inputBusca.value = '';
+      btnLimpar.classList.add('oculta');
+      atualizarMapaELista();
+    });
+  }
+
+  // --- Filtro por Cidade ---
+  document.querySelectorAll('.btn-cidade').forEach(btn => {
+    btn.onclick = () => {
+      document.querySelectorAll('.btn-cidade').forEach(b => b.classList.remove('ativo'));
+      btn.classList.add('ativo');
+      atualizarMapaELista();
+    };
+  });
+
+  // --- Filtro por Categoria ---
   document.querySelectorAll('.btn-filtro').forEach(btn => {
     btn.onclick = () => {
       document.querySelectorAll('.btn-filtro').forEach(b => b.classList.remove('ativo'));
       btn.classList.add('ativo');
-      atualizarMapaELista(btn.dataset.categoria, inputBusca ? inputBusca.value.toLowerCase() : '');
+      atualizarMapaELista();
     };
   });
 
-  // Controles Touch
+  // --- Alternador de Camadas ---
+  document.querySelectorAll('.btn-camada').forEach(btn => {
+    btn.onclick = () => {
+      document.querySelectorAll('.btn-camada').forEach(b => b.classList.remove('ativo'));
+      btn.classList.add('ativo');
+      
+      const tipoCamada = btn.dataset.camada;
+      if (camadaTileAtual) mapaInstancia.removeLayer(camadaTileAtual);
+
+      camadaTileAtual = L.tileLayer(TILE_LAYERS[tipoCamada], {
+        maxZoom: 19,
+        minZoom: 10,
+        subdomains: 'abcd',
+        attribution: '© OpenStreetMap / Esri'
+      }).addTo(mapaInstancia);
+    };
+  });
+
+  // --- Controles Touch ---
   document.getElementById('btn-zoom-in').onclick = () => mapaInstancia.zoomIn();
   document.getElementById('btn-zoom-out').onclick = () => mapaInstancia.zoomOut();
   document.getElementById('btn-recentralizar').onclick = () => {
+    limparLinhaRota();
     mapaInstancia.setView(usuarioCoordenadas, 14);
+    document.getElementById('mapa-detalhes').classList.add('oculta');
     mapaInstancia.invalidateSize(true);
   };
 
   document.getElementById('btn-fechar-detalhes').onclick = () => {
     document.getElementById('mapa-detalhes').classList.add('oculta');
+    limparLinhaRota();
   };
 }
 
-function atualizarMapaELista(categoria, termoBusca = '') {
+function atualizarMapaELista() {
   if (!marcadoresGrupo) return;
   marcadoresGrupo.clearLayers();
 
   const containerLista = document.getElementById('lista-locais');
   containerLista.innerHTML = '';
 
+  const termoBusca = (document.getElementById('busca-local')?.value || '').toLowerCase();
+  const cidadeAtiva = document.querySelector('.btn-cidade.ativo')?.dataset.cidade || 'todas';
+  const categoriaAtiva = document.querySelector('.btn-filtro.ativo')?.dataset.categoria || 'tudo';
+
+  atualizarContadoresCategorias(cidadeAtiva, termoBusca);
+
   const locaisFiltrados = LOCAIS_REGIAO.filter(local => {
-    const bateCategoria = (categoria === 'tudo' || local.categoria === categoria);
+    const bateCidade = (cidadeAtiva === 'todas' || local.cidade === cidadeAtiva);
+    const bateCategoria = (categoriaAtiva === 'tudo' || local.categoria === categoriaAtiva);
     const bateBusca = local.nome.toLowerCase().includes(termoBusca) ||
                       local.endereco.toLowerCase().includes(termoBusca) ||
+                      local.cidade.toLowerCase().includes(termoBusca) ||
                       local.status.toLowerCase().includes(termoBusca);
-    return bateCategoria && bateBusca;
+
+    return bateCidade && bateCategoria && bateBusca;
   });
+
+  if (locaisFiltrados.length === 0) {
+    containerLista.innerHTML = `<div class="sem-resultados">Nenhum local encontrado para os filtros selecionados.</div>`;
+    return;
+  }
 
   locaisFiltrados.forEach(local => {
     const dist = calcularDistanciaKm(usuarioCoordenadas[0], usuarioCoordenadas[1], local.lat, local.lng);
@@ -318,24 +441,23 @@ function atualizarMapaELista(categoria, termoBusca = '') {
     const customIcon = L.divIcon({
       className: '',
       html: pinHTML,
-      iconSize: [38, 38],
-      iconAnchor: [19, 38]
+      iconSize: [40, 40],
+      iconAnchor: [20, 40]
     });
 
     const m = L.marker([local.lat, local.lng], { icon: customIcon });
 
     m.bindPopup(`
       <strong style="font-size: 14px; color:#ffc629;">${local.nome}</strong><br>
-      <span style="font-size: 12px; color:#ccc;">${local.status} • ${dist} km</span>
+      <span style="font-size: 12px; color:#ccc;">${local.cidade} • ${dist} km</span>
     `);
 
     m.on('click', () => {
-      exibirDetalhes(local, dist);
+      selecionarEExibirLocal(local, dist);
     });
 
     marcadoresGrupo.addLayer(m);
 
-    // Card na Lista Lateral
     const card = document.createElement('div');
     card.className = `item-local ${local.categoria}`;
     card.innerHTML = `
@@ -343,12 +465,11 @@ function atualizarMapaELista(categoria, termoBusca = '') {
         <span class="item-titulo">${local.nome}</span>
         <span class="item-distancia">${dist} km</span>
       </div>
-      <div class="item-sub">${local.status}</div>
+      <div class="item-sub">${local.cidade} • ${local.status}</div>
     `;
 
     card.onclick = () => {
-      mapaInstancia.flyTo([local.lat, local.lng], 16, { duration: 1.2 });
-      exibirDetalhes(local, dist);
+      selecionarEExibirLocal(local, dist);
       m.openPopup();
     };
 
@@ -356,13 +477,70 @@ function atualizarMapaELista(categoria, termoBusca = '') {
   });
 }
 
+function atualizarContadoresCategorias(cidadeAtiva, termoBusca) {
+  const contadores = { tudo: 0, saude: 0, transporte: 0, servicos: 0 };
+
+  LOCAIS_REGIAO.forEach(local => {
+    const bateCidade = (cidadeAtiva === 'todas' || local.cidade === cidadeAtiva);
+    const bateBusca = local.nome.toLowerCase().includes(termoBusca) ||
+                      local.endereco.toLowerCase().includes(termoBusca) ||
+                      local.status.toLowerCase().includes(termoBusca);
+
+    if (bateCidade && bateBusca) {
+      contadores.tudo++;
+      if (contadores[local.categoria] !== undefined) {
+        contadores[local.categoria]++;
+      }
+    }
+  });
+
+  document.getElementById('qtd-tudo').innerText = contadores.tudo;
+  document.getElementById('qtd-saude').innerText = contadores.saude;
+  document.getElementById('qtd-transporte').innerText = contadores.transporte;
+  document.getElementById('qtd-servicos').innerText = contadores.servicos;
+}
+
+function selecionarEExibirLocal(local, distancia) {
+  desenharLinhaRota(usuarioCoordenadas, [local.lat, local.lng]);
+
+  const bounds = L.latLngBounds([usuarioCoordenadas, [local.lat, local.lng]]);
+  mapaInstancia.fitBounds(bounds, { padding: [60, 60], maxZoom: 15 });
+
+  exibirDetalhes(local, distancia);
+}
+
+function desenharLinhaRota(origem, destino) {
+  limparLinhaRota();
+
+  rotaLinha = L.polyline([origem, destino], {
+    color: '#ffc629',
+    weight: 5,
+    opacity: 0.9,
+    dashArray: '10, 10',
+    className: 'linha-rota-animada'
+  }).addTo(mapaInstancia);
+}
+
+function limparLinhaRota() {
+  if (rotaLinha && mapaInstancia) {
+    mapaInstancia.removeLayer(rotaLinha);
+    rotaLinha = null;
+  }
+}
+
 function exibirDetalhes(local, distancia) {
   document.getElementById('detalhe-nome').innerText = local.nome;
-  document.getElementById('detalhe-badge').innerText = local.status;
+  document.getElementById('detalhe-badge').innerText = `${local.cidade} • ${local.status}`;
   document.getElementById('detalhe-distancia').innerText = `📏 ${distancia} km`;
   document.getElementById('detalhe-endereco').innerText = `📍 ${local.endereco}`;
   document.getElementById('detalhe-horario').innerText = `🕒 ${local.horario}`;
   document.getElementById('detalhe-fone').innerText = `📞 ${local.fone}`;
+
+  const tempoPe = Math.max(1, Math.round((distancia / 5) * 60));
+  const tempoBus = Math.max(3, Math.round((distancia / 20) * 60 + 5));
+
+  document.getElementById('detalhe-tempo-pe').innerText = `${tempoPe} min`;
+  document.getElementById('detalhe-tempo-bus').innerText = `${tempoBus} min`;
 
   const urlRota = `https://www.google.com/maps/dir/?api=1&origin=${usuarioCoordenadas[0]},${usuarioCoordenadas[1]}&destination=${local.lat},${local.lng}`;
   document.getElementById('detalhe-qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(urlRota)}`;
@@ -396,4 +574,3 @@ botaoNao.addEventListener('click', () => confirmacao.classList.add('oculta'));
 telaInicial.addEventListener('click', () => mostrarTela('menu-principal'));
 
 mostrarTela('tela-inicial');
-

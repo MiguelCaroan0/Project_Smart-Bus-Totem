@@ -90,31 +90,46 @@
       <!-- Painel Lateral -->
       <aside class="mapa-painel">
         <div class="painel-header">
-          <h2 tabindex="-1">Guia de Locais</h2>
+          <h2 tabindex="-1">Guia de Locais e Rotas</h2>
           <div class="busca-box">
             <span class="busca-icone">🔍</span>
             <input type="text" id="busca-local" placeholder="Buscar hospital, terminal, rua..." autocomplete="off">
+            <button type="button" id="btn-limpar-busca" class="btn-limpar-busca oculta" aria-label="Limpar busca">✖</button>
           </div>
         </div>
 
+        <!-- Filtro por Cidade -->
+        <div class="mapa-cidades">
+          <button type="button" class="btn-cidade ativo" data-cidade="todas">Todas</button>
+          <button type="button" class="btn-cidade" data-cidade="Londrina">Londrina</button>
+          <button type="button" class="btn-cidade" data-cidade="Cambé">Cambé</button>
+          <button type="button" class="btn-cidade" data-cidade="Ibiporã">Ibiporã</button>
+        </div>
+
+        <!-- Filtro por Categoria -->
         <div class="mapa-filtros">
-          <button type="button" class="btn-filtro ativo" data-categoria="tudo">📍 Todos</button>
-          <button type="button" class="btn-filtro saude" data-categoria="saude">🏥 Saúde</button>
-          <button type="button" class="btn-filtro transporte" data-categoria="transporte">🚌 Terminais</button>
-          <button type="button" class="btn-filtro servicos" data-categoria="servicos">🏛️ Serviços</button>
+          <button type="button" class="btn-filtro ativo" data-categoria="tudo">📍 Todos <span id="qtd-tudo" class="contador-badge">0</span></button>
+          <button type="button" class="btn-filtro saude" data-categoria="saude">🏥 Saúde <span id="qtd-saude" class="contador-badge">0</span></button>
+          <button type="button" class="btn-filtro transporte" data-categoria="transporte">🚌 Terminais <span id="qtd-transporte" class="contador-badge">0</span></button>
+          <button type="button" class="btn-filtro servicos" data-categoria="servicos">🏛️ Serviços <span id="qtd-servicos" class="contador-badge">0</span></button>
         </div>
 
         <div id="lista-locais" class="lista-locais"></div>
 
         <!-- Card de Detalhes Glassmorphism -->
         <div id="mapa-detalhes" class="mapa-detalhes oculta">
-          <button type="button" id="btn-fechar-detalhes" class="btn-fechar">✖</button>
+          <button type="button" id="btn-fechar-detalhes" class="btn-fechar" aria-label="Fechar detalhes">✖</button>
           <div class="detalhe-header">
             <span id="detalhe-badge" class="badge-tipo">Tipo</span>
             <span id="detalhe-distancia" class="badge-distancia">0.0 km</span>
           </div>
           <h3 id="detalhe-nome">Nome do Local</h3>
          
+          <div class="estimativa-tempo">
+            <span>🚶 <strong id="detalhe-tempo-pe">-- min</strong> a pé</span>
+            <span>🚌 <strong id="detalhe-tempo-bus">-- min</strong> de ônibus</span>
+          </div>
+
           <div class="detalhe-info-grid">
             <p id="detalhe-endereco">📍 Endereço</p>
             <p id="detalhe-horario">🕒 Horário</p>
@@ -124,7 +139,7 @@
           <div class="qr-box">
             <div class="qr-textos">
               <strong>📱 Rota no seu Celular</strong>
-              <span>Escaneie para abrir no GPS</span>
+              <span>Escaneie para iniciar o GPS</span>
             </div>
             <img id="detalhe-qr" src="" alt="QR Code da Rota" />
           </div>
@@ -135,6 +150,14 @@
       <div class="mapa-wrapper">
         <div id="mapa-canvas"></div>
        
+        <!-- Alternador de Estilo do Mapa -->
+        <div class="mapa-camadas">
+          <button type="button" class="btn-camada ativo" data-camada="dark" title="Modo Escuro">🌙 Escuro</button>
+          <button type="button" class="btn-camada" data-camada="claro" title="Modo Claro">☀️ Claro</button>
+          <button type="button" class="btn-camada" data-camada="satelite" title="Modo Satélite">🛰️ Satélite</button>
+        </div>
+
+        <!-- Controles Touch Flutuantes -->
         <div class="mapa-controles-touch">
           <button type="button" id="btn-zoom-in" aria-label="Aumentar Zoom">＋</button>
           <button type="button" id="btn-zoom-out" aria-label="Diminuir Zoom">－</button>
@@ -170,8 +193,9 @@
     </div>
   </div>
 
-  <!-- Scripts -->
+  <!-- Scripts na ordem correta -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="MockDatas.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

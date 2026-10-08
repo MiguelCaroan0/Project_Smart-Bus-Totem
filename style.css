@@ -163,7 +163,10 @@ button {
   color: #4a5a6c;
 }
 
-/* ESTILOS DO MAPA */
+/* ==========================================================================
+   ESTILOS DO MAPA (DENSIDADE E RESOLUÇÃO DE ALTURA)
+   ========================================================================== */
+
 #tela-mapas {
   padding: 12px;
   justify-content: stretch;
@@ -181,27 +184,26 @@ button {
 /* Painel Lateral */
 .mapa-painel {
   flex: 1;
-  max-width: 420px;
+  max-width: 440px;
   display: flex;
   flex-direction: column;
   gap: 12px;
   background: var(--asfalto-claro);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   padding: 18px;
   border-radius: 20px;
   text-align: left;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   overflow: hidden;
 }
 
 .painel-header h2 {
-  font-size: 1.4rem;
+  font-size: 1.35rem;
   font-weight: 700;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   color: var(--sinal);
 }
 
-/* Busca */
 .busca-box {
   position: relative;
   display: flex;
@@ -217,9 +219,9 @@ button {
 
 #busca-local {
   width: 100%;
-  padding: 12px 12px 12px 40px;
-  background: rgba(0, 0, 0, 0.25);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 12px 40px 12px 38px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 12px;
   color: var(--branco);
   font-size: 0.95rem;
@@ -229,10 +231,52 @@ button {
 
 #busca-local:focus {
   border-color: var(--sinal);
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.5);
 }
 
-/* Filtros */
+.btn-limpar-busca {
+  position: absolute;
+  right: 10px;
+  background: transparent;
+  border: none;
+  color: #aaa;
+  font-size: 1rem;
+  padding: 6px;
+  cursor: pointer;
+}
+
+.btn-limpar-busca:hover {
+  color: var(--sinal);
+}
+
+/* Filtros por Cidade */
+.mapa-cidades {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.btn-cidade {
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--texto-suave);
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.btn-cidade.ativo, .btn-cidade:hover {
+  background: var(--sinal);
+  color: var(--asfalto);
+  font-weight: 700;
+  border-color: var(--sinal);
+}
+
+/* Filtros de Categoria */
 .mapa-filtros {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -240,10 +284,13 @@ button {
 }
 
 .btn-filtro {
-  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
   background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
   font-weight: 600;
   font-size: 0.85rem;
   color: var(--texto-suave);
@@ -257,11 +304,23 @@ button {
   font-weight: 700;
 }
 
-/* Lista de Card Itens */
+.contador-badge {
+  background: rgba(0, 0, 0, 0.25);
+  padding: 2px 7px;
+  border-radius: 10px;
+  font-size: 0.75rem;
+}
+
+.btn-filtro.ativo .contador-badge {
+  background: var(--asfalto);
+  color: var(--sinal);
+}
+
+/* Lista de Locais */
 .lista-locais {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
   flex: 1;
   overflow-y: auto;
   padding-right: 4px;
@@ -271,22 +330,28 @@ button {
   width: 6px;
 }
 .lista-locais::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.25);
   border-radius: 10px;
+}
+
+.sem-resultados {
+  text-align: center;
+  color: var(--texto-suave);
+  font-size: 0.9rem;
+  padding: 20px 10px;
 }
 
 .item-local {
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 12px 14px;
+  padding: 12px;
   border-radius: 14px;
   cursor: pointer;
   transition: transform 0.15s ease, background 0.2s ease;
-  position: relative;
 }
 
 .item-local:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.12);
   transform: translateY(-2px);
 }
 
@@ -299,38 +364,39 @@ button {
 
 .item-titulo {
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   color: var(--branco);
 }
 
 .item-distancia {
   font-size: 0.75rem;
   font-weight: 700;
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 198, 41, 0.15);
   padding: 2px 8px;
   border-radius: 10px;
   color: var(--sinal);
+  border: 1px solid rgba(255, 198, 41, 0.3);
 }
 
 .item-sub {
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   color: var(--texto-suave);
 }
 
-/* Detalhes do Ponto (Card Glassmorphism) */
+/* Card de Detalhes Glassmorphism */
 .mapa-detalhes {
-  background: rgba(20, 32, 46, 0.92);
-  backdrop-filter: blur(12px);
+  background: rgba(20, 32, 46, 0.95);
+  backdrop-filter: blur(14px);
   border: 1px solid var(--sinal);
   padding: 16px;
   border-radius: 16px;
   position: relative;
   box-shadow: 0 8px 24px rgba(0,0,0,0.6);
-  animation: subirPainel 0.3s ease-out;
+  animation: subirPainel 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes subirPainel {
-  from { opacity: 0; transform: translateY(15px); }
+  from { opacity: 0; transform: translateY(18px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
@@ -378,7 +444,22 @@ button {
 #detalhe-nome {
   font-size: 1.15rem;
   color: var(--branco);
+  margin-bottom: 8px;
+}
+
+.estimativa-tempo {
+  display: flex;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 0.8rem;
+  color: var(--branco);
   margin-bottom: 10px;
+}
+
+.estimativa-tempo strong {
+  color: var(--sinal);
 }
 
 .detalhe-info-grid {
@@ -420,7 +501,7 @@ button {
   border-radius: 6px;
 }
 
-/* Wrapper do Mapa */
+/* Wrapper do Mapa e Configuração de Dimensão Completa */
 .mapa-wrapper {
   flex: 2;
   position: relative;
@@ -428,15 +509,47 @@ button {
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-  min-height: 400px;
+  height: 100%;
+  min-height: 450px;
 }
 
 #mapa-canvas {
   width: 100%;
   height: 100%;
-  min-height: 100%;
+  min-height: 450px;
   background: #14202e;
   z-index: 1;
+}
+
+.mapa-camadas {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 1000;
+  display: flex;
+  gap: 6px;
+  background: rgba(20, 32, 46, 0.85);
+  backdrop-filter: blur(8px);
+  padding: 6px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.btn-camada {
+  padding: 6px 12px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: var(--branco);
+  transition: all 0.2s ease;
+}
+
+.btn-camada.ativo {
+  background: var(--sinal);
+  color: var(--asfalto);
+  font-weight: 700;
 }
 
 /* Controles Touch Flutuantes */
@@ -470,7 +583,7 @@ button {
   color: var(--asfalto);
 }
 
-/* PINS CUSTOMIZADOS LEAFLET */
+/* PINS LEAFLET */
 .custom-pin {
   display: flex;
   align-items: center;
@@ -493,23 +606,35 @@ button {
 .custom-pin.transporte { background: var(--transporte-cor); }
 .custom-pin.servicos { background: var(--servicos-cor); }
 
-/* Pin do Usuário / Totem */
+/* Pin do Usuário */
 .user-pin {
   background: var(--sinal);
   color: var(--asfalto);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 800;
-  padding: 6px 12px;
+  padding: 6px 10px;
   border-radius: 20px;
   border: 2px solid #ffffff;
   white-space: nowrap;
-  box-shadow: 0 0 15px rgba(255, 198, 41, 0.8);
-  animation: pulseGlow 2s infinite ease-in-out;
+  box-shadow: 0 0 15px rgba(255, 198, 41, 0.9);
+  animation: pulseGlow 1.8s infinite ease-in-out;
 }
 
 @keyframes pulseGlow {
-  0%, 100% { box-shadow: 0 0 10px rgba(255, 198, 41, 0.6); transform: scale(1); }
-  50% { box-shadow: 0 0 22px rgba(255, 198, 41, 1); transform: scale(1.05); }
+  0%, 100% { box-shadow: 0 0 8px rgba(255, 198, 41, 0.6); transform: scale(1); }
+  50% { box-shadow: 0 0 20px rgba(255, 198, 41, 1); transform: scale(1.04); }
+}
+
+/* Animação da Rota */
+.linha-rota-animada {
+  stroke-dasharray: 10, 10;
+  animation: dash 1.5s linear infinite;
+}
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: -20;
+  }
 }
 
 /* Popups Leaflet */
@@ -602,6 +727,6 @@ button {
 
 @media (max-width: 900px) {
   .mapa-container { flex-direction: column; height: auto; }
-  .mapa-painel { max-width: 100%; height: 260px; }
-  .mapa-wrapper { height: 350px; }
+  .mapa-painel { max-width: 100%; height: 280px; }
+  .mapa-wrapper { height: 380px; min-height: 380px; }
 }
